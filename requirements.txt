@@ -1,0 +1,16 @@
+# MEGA-Bot Requirements
+# Core dependencies for the XXXL MEGA BOT
+
+# Standard library async support (no additional package needed for asyncio)
+
+# Optional: Add these packages if you want to integrate with actual APIs
+# openai>=1.0.0          # For ChatGPT integration
+# google-generativeai    # For Gemini integration
+# anthropic              # For other AI platforms
+
+# Development dependencies
+pytest>=7.0.0
+pytest-asyncio>=0.21.0
+
+# Configuration
+python-dotenv>=1.0.0
