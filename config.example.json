@@ -1,0 +1,24 @@
+{
+  "api_keys": {
+    "copilot": "your-copilot-api-key",
+    "gemini": "your-gemini-api-key",
+    "chatgpt": "your-chatgpt-api-key",
+    "grok": "your-grok-api-key"
+  },
+  "database": {
+    "type": "sqlite",
+    "path": "megabot.db",
+    "research_cache_enabled": true
+  },
+  "workflow": {
+    "max_concurrent_tasks": 10,
+    "auto_update_interval": 3600,
+    "permission_level": "full"
+  },
+  "features": {
+    "deep_research": true,
+    "multi_tasking": true,
+    "auto_update": true,
+    "document_sync": true
+  }
+}
