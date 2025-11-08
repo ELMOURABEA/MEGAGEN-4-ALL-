@@ -1,6 +1,6 @@
 """
 Example: Using Input Validation and Logging
-Demonstrates the v1.1.0 validation and logging features
+Demonstrates validation and logging features introduced in v1.1.0 and available in v1.2.0
 """
 import asyncio
 from megabot import MegaBot, Config, setup_logging, validate_query, validate_topic
