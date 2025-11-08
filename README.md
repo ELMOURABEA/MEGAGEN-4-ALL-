@@ -32,17 +32,32 @@ MEGA-Bot integrates four powerful AI platforms:
 
 ## 📦 Installation
 
+### Quick Install
+
 ```bash
-# Clone the repository
+# Install from PyPI (when published)
+pip install megaagent
+
+# Or install from source
 git clone https://github.com/ELMOURABEA/MEGAGENT.git
 cd MEGAGENT
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Or install as a package
 pip install -e .
 ```
+
+### Installation Options
+
+```bash
+# Install with API server support
+pip install megaagent[api]
+
+# Install with development tools
+pip install megaagent[dev]
+
+# Install everything
+pip install megaagent[all]
+```
+
+For detailed installation instructions, see [INSTALLATION.md](INSTALLATION.md)
 
 ## ⚙️ Configuration
 
@@ -75,20 +90,32 @@ Customize `config.json` for your needs.
 
 ## 🚀 Quick Start
 
-### Demo Mode
-
-Run the demo to see MEGA-Bot in action:
+### Command Line Interface
 
 ```bash
-python main.py
+# Run demo mode
+megabot
+
+# Interactive mode
+megabot --interactive
+
+# Single query
+megabot query "What is AI?"
+
+# Deep research
+megabot research "machine learning" --depth deep
 ```
 
-### Interactive Mode
+### API Server
 
-Use the interactive CLI:
+Start MEGA-Bot as an API server for integration with web applications:
 
 ```bash
-python main.py --interactive
+# Start API server
+megabot-server --port 5000
+
+# Server will run at http://localhost:5000
+# Access API docs at http://localhost:5000/health
 ```
 
 ### Programmatic Usage
@@ -119,6 +146,30 @@ async def main():
     await bot.stop()
 
 asyncio.run(main())
+```
+
+### API Client Integration
+
+For integrating MEGA-Bot with other applications:
+
+```python
+from megabot.api.client import APIClient
+
+# Using context manager (automatic start/stop)
+with APIClient("http://localhost:5000") as client:
+    result = client.query("What is AI?")
+    print(result)
+```
+
+### Docker Deployment
+
+```bash
+# Using Docker Compose
+docker-compose up -d
+
+# Or build and run manually
+docker build -t megabot .
+docker run -p 5000:5000 megabot
 ```
 
 ## 📚 Core Capabilities
@@ -163,11 +214,19 @@ updates = bot.get_updates(limit=10)
 
 ## 🎯 Use Cases
 
+### As an Individual Agent
 - **Research & Development**: Deep dive into technical topics across multiple sources
 - **Code Development**: Leverage multiple AI assistants for code generation and review
 - **Data Analysis**: Comprehensive analysis with different AI perspectives
 - **Knowledge Synthesis**: Combine insights from multiple AI platforms
 - **Automated Workflows**: Complex multi-step processes with intelligent coordination
+
+### As an Integrated Agent
+- **Web Applications**: Integrate via REST API with Flask, Django, FastAPI
+- **Mobile Apps**: Connect to API server for AI capabilities
+- **Desktop Applications**: Use Python client library for direct integration
+- **Microservices**: Deploy as a containerized service in your architecture
+- **Custom Systems**: Integrate using HTTP REST endpoints from any language
 
 ## 🛠️ Components
 
@@ -254,6 +313,27 @@ Topics covered:
 - Advanced usage
 - Troubleshooting
 - Best practices
+
+## 🚢 Deployment Options
+
+MEGA-Bot can be deployed in multiple ways:
+
+1. **Standalone CLI**: Command-line tool for direct usage
+2. **API Server**: REST API for web/mobile/system integration
+3. **Docker Container**: Containerized deployment with Docker/Kubernetes
+4. **Python Package**: Import and use directly in your Python applications
+5. **System Service**: Run as a background service on Linux/Windows/macOS
+
+See [INSTALLATION.md](INSTALLATION.md) for detailed deployment instructions.
+
+## 🔌 Integration Examples
+
+Check out the [examples/integrations/](examples/integrations/) directory for:
+
+- **Flask Integration**: Web application example
+- **API Client**: Python client library usage
+- **REST API**: HTTP endpoint examples
+- **Docker**: Container deployment examples
 
 ## 🧪 Testing
 

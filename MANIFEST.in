@@ -1,0 +1,24 @@
+# Include documentation files
+include README.md
+include LICENSE
+include DOCUMENTATION.md
+include ARCHITECTURE.md
+include PROJECT_SUMMARY.md
+
+# Include configuration examples
+include config.example.json
+include .env.example
+
+# Include package data
+recursive-include megabot *.json *.yaml *.yml
+
+# Include examples
+recursive-include examples *.py *.md
+
+# Exclude unnecessary files
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude .git*
+global-exclude .DS_Store
+global-exclude *.db
+global-exclude *.sqlite
