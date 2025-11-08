@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Rewarded ads for bonus features
   - Partnership and sponsorship management
   - Ad rental slots
-- Configured AdMob IDs: `ca-app-pub-8167320193401713~7894343051` (app), `ca-app-pub-8167320193401713/5228651260` (banner)
+- AdMob integration configured via environment variables for security
 - Usage tracking with daily reset
 - Tier-based feature restrictions
 - 11 new tests for monetization and advertising (total: 39 tests)
@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - All monetization features follow existing validation patterns
+- **AdMob IDs moved to environment variables**: Hardcoded AdMob IDs removed from source code and now loaded securely from environment variables (ADMOB_APP_ID, ADMOB_BANNER_ID, ADMOB_INTERSTITIAL_ID, ADMOB_REWARDED_ID)
 - Ad IDs properly configured and validated
 
 ## [1.1.0] - 2025-11-08

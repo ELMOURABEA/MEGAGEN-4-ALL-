@@ -63,6 +63,12 @@ COPILOT_API_KEY=your-copilot-api-key
 GEMINI_API_KEY=your-gemini-api-key
 CHATGPT_API_KEY=your-chatgpt-api-key
 GROK_API_KEY=your-grok-api-key
+
+# Optional: AdMob IDs for advertising integration
+ADMOB_APP_ID=your-admob-app-id
+ADMOB_BANNER_ID=your-admob-banner-id
+ADMOB_INTERSTITIAL_ID=your-admob-interstitial-id
+ADMOB_REWARDED_ID=your-admob-rewarded-id
 ```
 
 ### 2. Configure Settings
