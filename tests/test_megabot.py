@@ -510,26 +510,31 @@ class TestAdvertising:
         assert ad_core.interstitial_id == ""
         assert ad_core.rewarded_id == ""
     
-    def test_config_loads_env_vars(self):
-        """Test that Config properly loads AdMob IDs from environment variables"""
+    @pytest.fixture
+    def admob_env_vars(self):
+        """Fixture to set and cleanup AdMob environment variables"""
         import os
-        from megabot.config import Config
-        
-        # Set environment variables
+        old_app_id = os.environ.get("ADMOB_APP_ID")
+        old_banner_id = os.environ.get("ADMOB_BANNER_ID")
         os.environ["ADMOB_APP_ID"] = "ca-app-pub-env~1234567890"
         os.environ["ADMOB_BANNER_ID"] = "ca-app-pub-env/1234567890"
+        yield
+        if old_app_id is not None:
+            os.environ["ADMOB_APP_ID"] = old_app_id
+        else:
+            os.environ.pop("ADMOB_APP_ID", None)
+        if old_banner_id is not None:
+            os.environ["ADMOB_BANNER_ID"] = old_banner_id
+        else:
+            os.environ.pop("ADMOB_BANNER_ID", None)
+
+    def test_config_loads_env_vars(self, admob_env_vars):
+        """Test that Config properly loads AdMob IDs from environment variables"""
+        from megabot.config import Config
         
-        # Create config
         config = Config()
         
-        # Verify environment variables are loaded
         assert config.get("advertising.app_id") == "ca-app-pub-env~1234567890"
         assert config.get("advertising.banner_id") == "ca-app-pub-env/1234567890"
-        
-        # Clean up
-        del os.environ["ADMOB_APP_ID"]
-        del os.environ["ADMOB_BANNER_ID"]
-
-
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
