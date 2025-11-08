@@ -12,6 +12,9 @@ from .integrations import (
 )
 from .database import ResearchEngine, DatabaseStorage
 from .workflow import TaskScheduler, PermissionManager, AutoUpdateManager
+from .utils import get_logger, validate_query, validate_topic, sanitize_input
+from .monetization import MonetizationManager
+from .advertising import AdvertisingCore
 
 
 class MegaBot:
@@ -33,6 +36,7 @@ class MegaBot:
             config: Configuration object (creates default if not provided)
         """
         self.config = config or Config()
+        self.logger = get_logger("core")
         
         # Initialize database storage
         self.storage = DatabaseStorage(self.config.get("database.path", "megabot.db"))
@@ -59,9 +63,28 @@ class MegaBot:
             self.config.get("workflow.auto_update_interval", 3600)
         )
         
+        # Initialize monetization (if enabled)
+        if self.config.get("monetization.enabled", False):
+            tier = self.config.get("monetization.tier", "free")
+            self.monetization = MonetizationManager(tier)
+            self.logger.info(f"Monetization enabled with {tier} tier")
+        else:
+            self.monetization = None
+        
+        # Initialize advertising (if enabled)
+        if self.config.get("monetization.advertising_enabled", False):
+            ad_config = self.config.get("advertising", {})
+            self.advertising = AdvertisingCore(ad_config)
+            self.advertising.initialize()
+            self.logger.info("Advertising core initialized")
+        else:
+            self.advertising = None
+        
         # Track running state
         self.running = False
         self.background_tasks: List[asyncio.Task] = []
+        
+        self.logger.debug("MEGA-Bot initialized successfully")
     
     def _init_integrations(self) -> List:
         """Initialize all AI platform integrations"""
@@ -133,16 +156,44 @@ class MegaBot:
         Returns:
             Aggregated responses from all platforms
         """
+        # Check monetization limits
+        if self.monetization:
+            can_query, limit_msg = self.monetization.can_query()
+            if not can_query:
+                self.logger.warning(f"Query blocked by monetization: {limit_msg}")
+                return {"error": limit_msg, "responses": {}}
+        
+        # Validate input
+        is_valid, error_msg = validate_query(prompt)
+        if not is_valid:
+            self.logger.error(f"Invalid query: {error_msg}")
+            return {"error": error_msg, "responses": {}}
+        
+        # Sanitize input
+        prompt = sanitize_input(prompt)
+        
         if not self.permission_manager.check_api_access():
+            self.logger.warning("API access permission denied")
             return {"error": "API access permission denied"}
         
+        self.logger.info(f"Querying all platforms: {prompt[:100]}...")
         print(f"Querying all platforms: {prompt}")
-        result = await self.research_engine.query_all_platforms(prompt, context)
         
-        # Add synthesis
-        result["synthesis"] = self._synthesize_responses(result["responses"])
-        
-        return result
+        try:
+            result = await self.research_engine.query_all_platforms(prompt, context)
+            
+            # Add synthesis
+            result["synthesis"] = self._synthesize_responses(result["responses"])
+            
+            # Record usage for monetization
+            if self.monetization:
+                self.monetization.record_query()
+            
+            self.logger.info(f"Query completed successfully, {len(result['responses'])} platforms responded")
+            return result
+        except Exception as e:
+            self.logger.error(f"Query failed: {str(e)}", exc_info=True)
+            return {"error": f"Query failed: {str(e)}", "responses": {}}
     
     async def research(self, topic: str, depth: str = "deep") -> Dict[str, Any]:
         """
@@ -155,18 +206,51 @@ class MegaBot:
         Returns:
             Comprehensive research results
         """
+        # Validate topic
+        is_valid, error_msg = validate_topic(topic)
+        if not is_valid:
+            self.logger.error(f"Invalid topic: {error_msg}")
+            return {"error": error_msg, "platforms_used": [], "synthesis": {}}
+        
+        # Sanitize input
+        topic = sanitize_input(topic)
+        
+        # Validate depth
+        valid_depths = ["shallow", "medium", "deep"]
+        if depth not in valid_depths:
+            self.logger.warning(f"Invalid depth '{depth}', defaulting to 'medium'")
+            depth = "medium"
+        
+        # Check monetization limits
+        if self.monetization:
+            can_research, limit_msg = self.monetization.can_research(depth)
+            if not can_research:
+                self.logger.warning(f"Research blocked by monetization: {limit_msg}")
+                return {"error": limit_msg, "platforms_used": [], "synthesis": {}}
+        
         if not self.permission_manager.check_research_access():
+            self.logger.warning("Research permission denied")
             return {"error": "Research permission denied"}
         
+        self.logger.info(f"Performing {depth} research on: {topic}")
         print(f"Performing {depth} research on: {topic}")
         
-        result = await self.research_engine.deep_research(
-            topic,
-            depth,
-            use_cache=self.config.get("database.research_cache_enabled", True)
-        )
-        
-        return result
+        try:
+            result = await self.research_engine.deep_research(
+                topic,
+                depth,
+                use_cache=self.config.get("database.research_cache_enabled", True)
+            )
+            
+            # Record usage for monetization
+            if self.monetization:
+                self.monetization.record_research()
+            
+            self.logger.info(f"Research completed successfully for: {topic}")
+            return result
+        except Exception as e:
+            self.logger.error(f"Research failed: {str(e)}", exc_info=True)
+            return {"error": f"Research failed: {str(e)}", "platforms_used": [], "synthesis": {}}
     
     async def sync_documents(self):
         """Synchronize latest documents from all platforms"""
@@ -179,7 +263,7 @@ class MegaBot:
     
     def get_status(self) -> Dict[str, Any]:
         """Get current status of MEGA-Bot"""
-        return {
+        status = {
             "running": self.running,
             "integrations": {
                 "total": len(self.integrations),
@@ -210,6 +294,16 @@ class MegaBot:
                 for platform in [i.platform_name for i in self.integrations if i.is_available()]
             }
         }
+        
+        # Add monetization info if enabled
+        if self.monetization:
+            status["monetization"] = self.monetization.get_tier_info()
+        
+        # Add advertising info if enabled
+        if self.advertising:
+            status["advertising"] = self.advertising.get_config()
+        
+        return status
     
     def get_capabilities(self) -> List[str]:
         """Get all capabilities from all platforms"""
@@ -316,3 +410,65 @@ class MegaBot:
             "topics_researched": len(topics),
             "results": results
         }
+    
+    def get_subscription_tiers(self) -> Dict[str, Any]:
+        """Get information about available subscription tiers"""
+        if self.monetization:
+            return MonetizationManager.get_all_tiers()
+        return {}
+    
+    def get_tier_info(self) -> Dict[str, Any]:
+        """Get current subscription tier information"""
+        if self.monetization:
+            return self.monetization.get_tier_info()
+        return {"tier": "unlimited", "note": "Monetization not enabled"}
+    
+    def show_banner_ad(self, position: str = "bottom") -> Dict[str, Any]:
+        """
+        Show banner advertisement
+        
+        Args:
+            position: Banner position (top, bottom)
+        
+        Returns:
+            Result dictionary
+        """
+        if self.advertising:
+            return self.advertising.show_banner(position)
+        return {"status": "disabled", "message": "Advertising not enabled"}
+    
+    def show_rewarded_ad(self, reward_type: str = "bonus_queries") -> Dict[str, Any]:
+        """
+        Show rewarded advertisement
+        
+        Args:
+            reward_type: Type of reward (bonus_queries, bonus_research, tier_upgrade)
+        
+        Returns:
+            Result dictionary with reward info
+        """
+        if self.advertising:
+            result = self.advertising.show_rewarded(reward_type)
+            
+            # Apply reward if successful
+            if result.get("status") == "success" and self.monetization:
+                reward = result.get("reward", {})
+                if reward_type == "bonus_queries":
+                    # Apply bonus queries to the user's account
+                    amount = reward.get("amount", 1)
+                    if hasattr(self.monetization, "add_bonus_queries"):
+                        self.monetization.add_bonus_queries(amount)
+                        self.logger.info(f"Bonus queries applied: {amount}")
+                    else:
+                        self.logger.warning("Bonus queries reward not applied: MonetizationManager.add_bonus_queries not implemented")
+                elif reward_type == "bonus_research":
+                    # Apply bonus research to the user's account
+                    amount = reward.get("amount", 1)
+                    if hasattr(self.monetization, "add_bonus_research"):
+                        self.monetization.add_bonus_research(amount)
+                        self.logger.info(f"Bonus research applied: {amount}")
+                    else:
+                        self.logger.warning("Bonus research reward not applied: MonetizationManager.add_bonus_research not implemented")
+            
+            return result
+        return {"status": "disabled", "message": "Advertising not enabled"}

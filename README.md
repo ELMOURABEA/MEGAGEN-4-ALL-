@@ -20,6 +20,8 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 - **🔐 Full Permission Management**: Comprehensive access control system
 - **💾 Intelligent Caching**: Fast response times with smart result caching
 - **📊 Workflow Automation**: Complex workflow execution with multiple steps
+- **💰 Monetization System**: Flexible subscription tiers (Free, Pro, Full Energy)
+- **📱 Advertising Integration**: Google AdMob support with banner and rewarded ads
 
 ## 🏗️ Architecture
 
@@ -243,6 +245,70 @@ synthesis = result['synthesis']
 # Contains unified insights from all platforms
 ```
 
+### Input Validation & Security
+
+Automatic validation and sanitization of user inputs:
+
+```python
+from megabot import validate_query, validate_topic
+
+# Validate queries before processing
+is_valid, error = validate_query("Your query here")
+
+# Validate research topics
+is_valid, error = validate_topic("Your topic here")
+```
+
+### Logging & Monitoring
+
+Comprehensive logging for debugging and monitoring:
+
+```python
+from megabot import setup_logging
+
+# Configure logging level
+setup_logging("INFO")  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+```
+
+### Monetization & Subscription Tiers
+
+MEGA-Bot supports flexible subscription tiers:
+
+```python
+from megabot import MegaBot, Config
+
+# Free tier (default)
+bot_free = MegaBot()
+
+# Pro tier (unlimited usage)
+config = Config()
+config.set("monetization.tier", "pro")
+bot_pro = MegaBot(config)
+
+# Check tier info
+tier_info = bot_pro.get_tier_info()
+print(f"Tier: {tier_info['tier']}")
+print(f"Queries today: {tier_info['usage']['queries_today']}")
+```
+
+**Available Tiers:**
+- **Free**: 10 queries/day, 5 research/day, shallow research only
+- **Pro** ($9.99/month): Unlimited queries, all research depths, 10 concurrent tasks
+- **Full Energy** ($29.99/month): Everything in Pro + 20 concurrent tasks + priority support
+
+### Advertising Integration
+
+Google AdMob integration for monetization:
+
+```python
+# Show banner ad
+result = bot.show_banner_ad("bottom")
+
+# Show rewarded ad for bonus features
+result = bot.show_rewarded_ad("bonus_queries")
+print(f"Reward: {result['reward']['description']}")
+```
+
 ## 📖 Documentation
 
 For detailed documentation, see [DOCUMENTATION.md](DOCUMENTATION.md)
@@ -263,6 +329,16 @@ Run tests:
 pip install -r requirements.txt
 pytest
 ```
+
+Current test coverage: 39 tests covering:
+- Configuration management
+- AI platform integrations
+- Core functionality
+- Database operations
+- Workflow components
+- Input validation and utilities
+- Monetization and subscription tiers
+- Advertising integration
 
 ## 🤝 Contributing
 

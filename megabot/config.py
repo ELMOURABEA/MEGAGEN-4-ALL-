@@ -44,6 +44,17 @@ class Config:
                 "multi_tasking": True,
                 "auto_update": True,
                 "document_sync": True
+            },
+            "monetization": {
+                "enabled": True,
+                "tier": os.getenv("MEGABOT_TIER", "free"),
+                "advertising_enabled": True
+            },
+            "advertising": {
+                "app_id": os.getenv("ADMOB_APP_ID", ""),
+                "banner_id": os.getenv("ADMOB_BANNER_ID", ""),
+                "interstitial_id": os.getenv("ADMOB_INTERSTITIAL_ID", ""),
+                "rewarded_id": os.getenv("ADMOB_REWARDED_ID", "")
             }
         }
         
