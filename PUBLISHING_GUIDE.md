@@ -20,7 +20,7 @@ git checkout main
 git pull origin main
 
 # Merge the release branch
-git merge copilot/release-update-version-1-2-0
+git merge <release-branch>
 
 # Create an annotated tag for v1.2.0
 git tag -a v1.2.0 -m "Release version 1.2.0 - Monetization and GitHub Marketplace"
