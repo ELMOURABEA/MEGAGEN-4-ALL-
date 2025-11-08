@@ -1,0 +1,115 @@
+name: 'MEGAGENT - AI Multi-Platform Integration'
+description: 'Unified AI agent integrating GitHub Copilot, Gemini, ChatGPT, and Grok for comprehensive research and automation'
+author: 'ELMOURABEA'
+
+branding:
+  icon: 'zap'
+  color: 'blue'
+
+inputs:
+  mode:
+    description: 'Operation mode: query, research, or workflow'
+    required: true
+    default: 'query'
+  
+  prompt:
+    description: 'Query prompt or research topic'
+    required: true
+  
+  depth:
+    description: 'Research depth: shallow, medium, or deep (for research mode)'
+    required: false
+    default: 'medium'
+  
+  workflow-name:
+    description: 'Workflow name to execute (for workflow mode)'
+    required: false
+  
+  copilot-api-key:
+    description: 'GitHub Copilot API key'
+    required: false
+  
+  gemini-api-key:
+    description: 'Google Gemini API key'
+    required: false
+  
+  chatgpt-api-key:
+    description: 'OpenAI ChatGPT API key'
+    required: false
+  
+  grok-api-key:
+    description: 'X.AI Grok API key'
+    required: false
+  
+  tier:
+    description: 'Subscription tier: free, pro, or full_energy'
+    required: false
+    default: 'free'
+
+outputs:
+  result:
+    description: 'JSON result from the MEGAGENT operation'
+  
+  platforms-used:
+    description: 'Number of AI platforms that responded'
+  
+  synthesis:
+    description: 'Synthesized results from all platforms'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install -q python-dotenv pytest pytest-asyncio
+    
+    - name: Install MEGAGENT
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        pip install -q -e .
+    
+    - name: Create config
+      shell: bash
+      run: |
+        cat > megabot_config.json << EOF
+        {
+          "monetization": {
+            "tier": "${{ inputs.tier }}",
+            "enabled": true
+          }
+        }
+        EOF
+    
+    - name: Set environment variables
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.copilot-api-key }}" ]; then
+          echo "COPILOT_API_KEY=${{ inputs.copilot-api-key }}" >> $GITHUB_ENV
+        fi
+        if [ -n "${{ inputs.gemini-api-key }}" ]; then
+          echo "GEMINI_API_KEY=${{ inputs.gemini-api-key }}" >> $GITHUB_ENV
+        fi
+        if [ -n "${{ inputs.chatgpt-api-key }}" ]; then
+          echo "CHATGPT_API_KEY=${{ inputs.chatgpt-api-key }}" >> $GITHUB_ENV
+        fi
+        if [ -n "${{ inputs.grok-api-key }}" ]; then
+          echo "GROK_API_KEY=${{ inputs.grok-api-key }}" >> $GITHUB_ENV
+        fi
+    
+    - name: Run MEGAGENT
+      shell: bash
+      id: megagent
+      run: |
+        cd ${{ github.action_path }}
+        python scripts/run_action.py \
+          --mode "${{ inputs.mode }}" \
+          --prompt "${{ inputs.prompt }}" \
+          --depth "${{ inputs.depth }}" \
+          --workflow-name "${{ inputs.workflow-name }}"

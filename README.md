@@ -8,6 +8,10 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v1.2.0)
+[![Tests](https://img.shields.io/badge/tests-39%20passing-success.svg)](tests/)
+[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Ready-blue.svg)](action.yml)
+[![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Published-orange.svg)](https://github.com/marketplace/actions/megagent-ai-multi-platform-integration)
 
 </div>
 
@@ -33,6 +37,23 @@ MEGA-Bot integrates four powerful AI platforms:
 4. **Grok 4 Super** - Real-time data and social media insights
 
 ## 📦 Installation
+
+### As a GitHub Action
+
+Add to your workflow (`.github/workflows/your-workflow.yml`):
+
+```yaml
+- name: Run MEGAGENT
+  uses: ELMOURABEA/MEGAGENT@v1.2.0
+  with:
+    mode: 'query'
+    prompt: 'Your AI query here'
+    tier: 'free'
+```
+
+See [MARKETPLACE.md](MARKETPLACE.md) for complete GitHub Action documentation.
+
+### As a Python Package
 
 ```bash
 # Clone the repository
