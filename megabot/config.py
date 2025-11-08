@@ -51,10 +51,10 @@ class Config:
                 "advertising_enabled": True
             },
             "advertising": {
-                "app_id": "ca-app-pub-8167320193401713~7894343051",
-                "banner_id": "ca-app-pub-8167320193401713/5228651260",
-                "interstitial_id": "",
-                "rewarded_id": ""
+                "app_id": os.getenv("ADMOB_APP_ID", ""),
+                "banner_id": os.getenv("ADMOB_BANNER_ID", ""),
+                "interstitial_id": os.getenv("ADMOB_INTERSTITIAL_ID", ""),
+                "rewarded_id": os.getenv("ADMOB_REWARDED_ID", "")
             }
         }
         
