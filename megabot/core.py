@@ -13,6 +13,8 @@ from .integrations import (
 from .database import ResearchEngine, DatabaseStorage
 from .workflow import TaskScheduler, PermissionManager, AutoUpdateManager
 from .utils import get_logger, validate_query, validate_topic, sanitize_input
+from .monetization import MonetizationManager
+from .advertising import AdvertisingCore
 
 
 class MegaBot:
@@ -60,6 +62,23 @@ class MegaBot:
             self.storage,
             self.config.get("workflow.auto_update_interval", 3600)
         )
+        
+        # Initialize monetization (if enabled)
+        if self.config.get("monetization.enabled", False):
+            tier = self.config.get("monetization.tier", "free")
+            self.monetization = MonetizationManager(tier)
+            self.logger.info(f"Monetization enabled with {tier} tier")
+        else:
+            self.monetization = None
+        
+        # Initialize advertising (if enabled)
+        if self.config.get("monetization.advertising_enabled", False):
+            ad_config = self.config.get("advertising", {})
+            self.advertising = AdvertisingCore(ad_config)
+            self.advertising.initialize()
+            self.logger.info("Advertising core initialized")
+        else:
+            self.advertising = None
         
         # Track running state
         self.running = False
@@ -137,6 +156,13 @@ class MegaBot:
         Returns:
             Aggregated responses from all platforms
         """
+        # Check monetization limits
+        if self.monetization:
+            can_query, limit_msg = self.monetization.can_query()
+            if not can_query:
+                self.logger.warning(f"Query blocked by monetization: {limit_msg}")
+                return {"error": limit_msg, "responses": {}}
+        
         # Validate input
         is_valid, error_msg = validate_query(prompt)
         if not is_valid:
@@ -158,6 +184,10 @@ class MegaBot:
             
             # Add synthesis
             result["synthesis"] = self._synthesize_responses(result["responses"])
+            
+            # Record usage for monetization
+            if self.monetization:
+                self.monetization.record_query()
             
             self.logger.info(f"Query completed successfully, {len(result['responses'])} platforms responded")
             return result
@@ -191,6 +221,13 @@ class MegaBot:
             self.logger.warning(f"Invalid depth '{depth}', defaulting to 'medium'")
             depth = "medium"
         
+        # Check monetization limits
+        if self.monetization:
+            can_research, limit_msg = self.monetization.can_research(depth)
+            if not can_research:
+                self.logger.warning(f"Research blocked by monetization: {limit_msg}")
+                return {"error": limit_msg, "platforms_used": [], "synthesis": {}}
+        
         if not self.permission_manager.check_research_access():
             self.logger.warning("Research permission denied")
             return {"error": "Research permission denied"}
@@ -204,6 +241,10 @@ class MegaBot:
                 depth,
                 use_cache=self.config.get("database.research_cache_enabled", True)
             )
+            
+            # Record usage for monetization
+            if self.monetization:
+                self.monetization.record_research()
             
             self.logger.info(f"Research completed successfully for: {topic}")
             return result
@@ -222,7 +263,7 @@ class MegaBot:
     
     def get_status(self) -> Dict[str, Any]:
         """Get current status of MEGA-Bot"""
-        return {
+        status = {
             "running": self.running,
             "integrations": {
                 "total": len(self.integrations),
@@ -253,6 +294,16 @@ class MegaBot:
                 for platform in [i.platform_name for i in self.integrations if i.is_available()]
             }
         }
+        
+        # Add monetization info if enabled
+        if self.monetization:
+            status["monetization"] = self.monetization.get_tier_info()
+        
+        # Add advertising info if enabled
+        if self.advertising:
+            status["advertising"] = self.advertising.get_config()
+        
+        return status
     
     def get_capabilities(self) -> List[str]:
         """Get all capabilities from all platforms"""
@@ -359,3 +410,55 @@ class MegaBot:
             "topics_researched": len(topics),
             "results": results
         }
+    
+    def get_subscription_tiers(self) -> Dict[str, Any]:
+        """Get information about available subscription tiers"""
+        if self.monetization:
+            return MonetizationManager.get_all_tiers()
+        return {}
+    
+    def get_tier_info(self) -> Dict[str, Any]:
+        """Get current subscription tier information"""
+        if self.monetization:
+            return self.monetization.get_tier_info()
+        return {"tier": "unlimited", "note": "Monetization not enabled"}
+    
+    def show_banner_ad(self, position: str = "bottom") -> Dict[str, Any]:
+        """
+        Show banner advertisement
+        
+        Args:
+            position: Banner position (top, bottom)
+        
+        Returns:
+            Result dictionary
+        """
+        if self.advertising:
+            return self.advertising.show_banner(position)
+        return {"status": "disabled", "message": "Advertising not enabled"}
+    
+    def show_rewarded_ad(self, reward_type: str = "bonus_queries") -> Dict[str, Any]:
+        """
+        Show rewarded advertisement
+        
+        Args:
+            reward_type: Type of reward (bonus_queries, bonus_research, tier_upgrade)
+        
+        Returns:
+            Result dictionary with reward info
+        """
+        if self.advertising:
+            result = self.advertising.show_rewarded(reward_type)
+            
+            # Apply reward if successful
+            if result.get("status") == "success" and self.monetization:
+                reward = result.get("reward", {})
+                if reward_type == "bonus_queries":
+                    # Give bonus queries (would need to track this)
+                    self.logger.info(f"Bonus queries awarded: {reward}")
+                elif reward_type == "bonus_research":
+                    # Give bonus research
+                    self.logger.info(f"Bonus research awarded: {reward}")
+            
+            return result
+        return {"status": "disabled", "message": "Advertising not enabled"}

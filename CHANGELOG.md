@@ -5,6 +5,39 @@ All notable changes to MEGA-Bot will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-08
+
+### Added
+- **Monetization System**: Complete subscription tier management
+  - Free tier: 10 queries/day, 5 research/day, shallow research only
+  - Pro tier: Unlimited queries and research, all depths
+  - Full Energy tier: Pro + 20 concurrent tasks + priority support
+- **Advertising Core**: Google AdMob integration
+  - Banner ads with configurable placement
+  - Interstitial ads
+  - Rewarded ads for bonus features
+  - Partnership and sponsorship management
+  - Ad rental slots
+- Configured AdMob IDs: `ca-app-pub-8167320193401713~7894343051` (app), `ca-app-pub-8167320193401713/5228651260` (banner)
+- Usage tracking with daily reset
+- Tier-based feature restrictions
+- 11 new tests for monetization and advertising (total: 39 tests)
+- `get_subscription_tiers()` - View all available tiers
+- `get_tier_info()` - View current tier and usage
+- `show_banner_ad()` - Display banner advertisements
+- `show_rewarded_ad()` - Display rewarded ads with bonuses
+
+### Changed
+- Version bumped from 1.1.0 to 1.2.0
+- Core module now checks monetization limits before queries and research
+- TaskScheduler now uses tier-based concurrent task limits
+- Configuration expanded with monetization and advertising sections
+- Status endpoint now includes monetization and advertising info
+
+### Security
+- All monetization features follow existing validation patterns
+- Ad IDs properly configured and validated
+
 ## [1.1.0] - 2025-11-08
 
 ### Added

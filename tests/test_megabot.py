@@ -111,7 +111,10 @@ class TestMegaBot:
     @pytest.mark.asyncio
     async def test_megabot_research(self):
         """Test research functionality"""
-        bot = MegaBot()
+        # Create config with pro tier for testing
+        config = Config()
+        config.set("monetization.tier", "pro")
+        bot = MegaBot(config)
         await bot.start()
         
         result = await bot.research("test topic", "medium")
@@ -340,6 +343,141 @@ class TestUtils:
         
         logger2 = get_logger("test")
         assert logger2 is not None
+
+
+class TestMonetization:
+    """Test monetization features"""
+    
+    def test_monetization_manager_creation(self):
+        """Test creating a monetization manager"""
+        from megabot.monetization import MonetizationManager
+        
+        manager = MonetizationManager("free")
+        assert manager is not None
+        assert manager.tier.value == "free"
+    
+    def test_free_tier_query_limit(self):
+        """Test free tier query limits"""
+        from megabot.monetization import MonetizationManager
+        
+        manager = MonetizationManager("free")
+        
+        # Should allow first 10 queries
+        for i in range(10):
+            can_query, msg = manager.can_query()
+            assert can_query is True
+            manager.record_query()
+        
+        # 11th query should be blocked
+        can_query, msg = manager.can_query()
+        assert can_query is False
+        assert "limit reached" in msg.lower()
+    
+    def test_pro_tier_unlimited(self):
+        """Test pro tier has unlimited queries"""
+        from megabot.monetization import MonetizationManager
+        
+        manager = MonetizationManager("pro")
+        
+        # Should allow many queries
+        for i in range(20):
+            can_query, msg = manager.can_query()
+            assert can_query is True
+            manager.record_query()
+    
+    def test_research_depth_restrictions(self):
+        """Test research depth restrictions by tier"""
+        from megabot.monetization import MonetizationManager
+        
+        free_manager = MonetizationManager("free")
+        pro_manager = MonetizationManager("pro")
+        
+        # Free tier can only do shallow research
+        can_shallow, _ = free_manager.can_research("shallow")
+        assert can_shallow is True
+        
+        can_deep, msg = free_manager.can_research("deep")
+        assert can_deep is False
+        assert "not available" in msg.lower()
+        
+        # Pro tier can do all depths
+        can_deep, _ = pro_manager.can_research("deep")
+        assert can_deep is True
+    
+    def test_tier_info(self):
+        """Test getting tier information"""
+        from megabot.monetization import MonetizationManager
+        
+        manager = MonetizationManager("pro")
+        info = manager.get_tier_info()
+        
+        assert "tier" in info
+        assert "limits" in info
+        assert "usage" in info
+        assert info["tier"] == "pro"
+    
+    def test_get_all_tiers(self):
+        """Test getting all tier information"""
+        from megabot.monetization import MonetizationManager
+        
+        tiers = MonetizationManager.get_all_tiers()
+        assert "free" in tiers
+        assert "pro" in tiers
+        assert "full_energy" in tiers
+
+
+class TestAdvertising:
+    """Test advertising features"""
+    
+    def test_advertising_core_creation(self):
+        """Test creating advertising core"""
+        from megabot.advertising import AdvertisingCore
+        
+        ad_core = AdvertisingCore()
+        assert ad_core is not None
+    
+    def test_advertising_initialization(self):
+        """Test advertising initialization"""
+        from megabot.advertising import AdvertisingCore
+        
+        ad_core = AdvertisingCore()
+        result = ad_core.initialize()
+        assert result is True
+    
+    def test_show_banner(self):
+        """Test showing banner ad"""
+        from megabot.advertising import AdvertisingCore
+        
+        ad_core = AdvertisingCore()
+        ad_core.initialize()
+        
+        result = ad_core.show_banner("bottom")
+        assert result["status"] == "success"
+        assert result["type"] == "banner"
+    
+    def test_show_rewarded(self):
+        """Test showing rewarded ad"""
+        from megabot.advertising import AdvertisingCore
+        
+        ad_core = AdvertisingCore({
+            "rewarded_id": "test-rewarded-id"
+        })
+        ad_core.initialize()
+        
+        result = ad_core.show_rewarded("bonus_queries")
+        assert result["status"] == "success"
+        assert "reward" in result
+    
+    def test_ad_config(self):
+        """Test getting ad configuration"""
+        from megabot.advertising import AdvertisingCore
+        
+        ad_core = AdvertisingCore()
+        ad_core.initialize()
+        
+        config = ad_core.get_config()
+        assert config["initialized"] is True
+        assert "app_id" in config
 
 
 if __name__ == "__main__":

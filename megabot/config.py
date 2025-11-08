@@ -44,6 +44,17 @@ class Config:
                 "multi_tasking": True,
                 "auto_update": True,
                 "document_sync": True
+            },
+            "monetization": {
+                "enabled": True,
+                "tier": os.getenv("MEGABOT_TIER", "free"),
+                "advertising_enabled": True
+            },
+            "advertising": {
+                "app_id": "ca-app-pub-8167320193401713~7894343051",
+                "banner_id": "ca-app-pub-8167320193401713/5228651260",
+                "interstitial_id": "",
+                "rewarded_id": ""
             }
         }
         

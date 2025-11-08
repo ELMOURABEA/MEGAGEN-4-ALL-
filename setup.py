@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="megabot",
-    version="1.1.0",
+    version="1.2.0",
     author="MEGAGENT Team",
     description="XXXL MEGA BOT - Unified AI agent integrating multiple platforms",
     long_description=long_description,
