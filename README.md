@@ -8,6 +8,10 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Package](https://img.shields.io/badge/package-megaagent-orange.svg)](https://pypi.org/project/megaagent/)
+[![Docker](https://img.shields.io/badge/docker-ready-brightgreen.svg)](https://hub.docker.com/r/elmourabea/megabot)
+
+**[Quick Start](QUICKSTART.md)** | **[Documentation](DOCUMENTATION.md)** | **[Installation](INSTALLATION.md)** | **[Examples](examples/)**
 
 </div>
 

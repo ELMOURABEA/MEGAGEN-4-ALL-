@@ -4,6 +4,11 @@ include LICENSE
 include DOCUMENTATION.md
 include ARCHITECTURE.md
 include PROJECT_SUMMARY.md
+include INSTALLATION.md
+include PUBLISHING.md
+include USAGE_GUIDE.md
+include CHANGELOG.md
+include QUICKSTART.md
 
 # Include configuration examples
 include config.example.json
