@@ -142,4 +142,6 @@ if __name__ == '__main__':
     print("Open your browser to interact with MEGA-Bot")
     print("=" * 80)
     
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # Note: In production, use a proper WSGI server like gunicorn
+    # For development only:
+    app.run(host='0.0.0.0', port=5001, debug=False)

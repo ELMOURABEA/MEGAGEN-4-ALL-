@@ -236,7 +236,9 @@ def main():
     print("  POST /api/v1/sync         - Sync documents")
     print("=" * 80)
     
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    # Note: For production, use a proper WSGI server like gunicorn or waitress
+    # Debug mode is disabled by default for security
+    app.run(host='0.0.0.0', port=port, debug=False)
 
 
 if __name__ == '__main__':
