@@ -454,11 +454,21 @@ class MegaBot:
             if result.get("status") == "success" and self.monetization:
                 reward = result.get("reward", {})
                 if reward_type == "bonus_queries":
-                    # Give bonus queries (would need to track this)
-                    self.logger.info(f"Bonus queries awarded: {reward}")
+                    # Apply bonus queries to the user's account
+                    amount = reward.get("amount", 1)
+                    if hasattr(self.monetization, "add_bonus_queries"):
+                        self.monetization.add_bonus_queries(amount)
+                        self.logger.info(f"Bonus queries applied: {amount}")
+                    else:
+                        self.logger.warning("Bonus queries reward not applied: MonetizationManager.add_bonus_queries not implemented")
                 elif reward_type == "bonus_research":
-                    # Give bonus research
-                    self.logger.info(f"Bonus research awarded: {reward}")
+                    # Apply bonus research to the user's account
+                    amount = reward.get("amount", 1)
+                    if hasattr(self.monetization, "add_bonus_research"):
+                        self.monetization.add_bonus_research(amount)
+                        self.logger.info(f"Bonus research applied: {amount}")
+                    else:
+                        self.logger.warning("Bonus research reward not applied: MonetizationManager.add_bonus_research not implemented")
             
             return result
         return {"status": "disabled", "message": "Advertising not enabled"}
