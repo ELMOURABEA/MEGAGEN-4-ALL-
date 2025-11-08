@@ -108,53 +108,8 @@ runs:
       id: megagent
       run: |
         cd ${{ github.action_path }}
-        python -c "
-        import asyncio
-        import json
-        import os
-        from megabot import MegaBot, Config
-        
-        async def run():
-            config = Config()
-            if os.path.exists('megabot_config.json'):
-                with open('megabot_config.json', 'r') as f:
-                    cfg = json.load(f)
-                    for key, value in cfg.items():
-                        config.config[key] = value
-            
-            bot = MegaBot(config)
-            await bot.start()
-            
-            mode = '${{ inputs.mode }}'
-            prompt = '''${{ inputs.prompt }}'''
-            
-            result = {}
-            if mode == 'query':
-                result = await bot.query(prompt)
-            elif mode == 'research':
-                depth = '${{ inputs.depth }}'
-                result = await bot.research(prompt, depth=depth)
-            elif mode == 'workflow':
-                workflow = '${{ inputs.workflow-name }}'
-                result = await bot.execute_workflow(workflow, topic=prompt)
-            
-            await bot.stop()
-            
-            # Output results
-            print(f'::set-output name=result::{json.dumps(result)}')
-            platforms = len(result.get('platforms_used', result.get('responses', {})))
-            print(f'::set-output name=platforms-used::{platforms}')
-            synthesis = json.dumps(result.get('synthesis', {}))
-            print(f'::set-output name=synthesis::{synthesis}')
-            
-            # Also write to summary
-            with open(os.environ.get('GITHUB_STEP_SUMMARY', '/tmp/summary'), 'a') as f:
-                f.write(f'## MEGAGENT Results\\n\\n')
-                f.write(f'**Mode**: {mode}\\n\\n')
-                f.write(f'**Prompt**: {prompt}\\n\\n')
-                f.write(f'**Platforms Used**: {platforms}\\n\\n')
-                if result.get('synthesis'):
-                    f.write(f'**Synthesis**: {synthesis}\\n\\n')
-        
-        asyncio.run(run())
-        "
+        python scripts/run_action.py \
+          --mode "${{ inputs.mode }}" \
+          --prompt "${{ inputs.prompt }}" \
+          --depth "${{ inputs.depth }}" \
+          --workflow-name "${{ inputs.workflow-name }}"
