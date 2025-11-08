@@ -478,7 +478,63 @@ class TestAdvertising:
         config = ad_core.get_config()
         assert config["initialized"] is True
         assert "app_id" in config
+    
+    def test_ad_ids_from_config(self):
+        """Test that AdMob IDs are properly loaded from config"""
+        from megabot.advertising import AdvertisingCore
+        
+        # Test with custom config
+        custom_config = {
+            "app_id": "ca-app-pub-test~1234567890",
+            "banner_id": "ca-app-pub-test/1234567890",
+            "interstitial_id": "ca-app-pub-test/0987654321",
+            "rewarded_id": "ca-app-pub-test/1122334455"
+        }
+        ad_core = AdvertisingCore(custom_config)
+        
+        assert ad_core.app_id == "ca-app-pub-test~1234567890"
+        assert ad_core.banner_id == "ca-app-pub-test/1234567890"
+        assert ad_core.interstitial_id == "ca-app-pub-test/0987654321"
+        assert ad_core.rewarded_id == "ca-app-pub-test/1122334455"
+    
+    def test_ad_ids_default_empty(self):
+        """Test that AdMob IDs default to empty strings when not configured"""
+        from megabot.advertising import AdvertisingCore
+        
+        # Test with no config
+        ad_core = AdvertisingCore()
+        
+        # Without configuration, IDs should be empty strings (not hardcoded)
+        assert ad_core.app_id == ""
+        assert ad_core.banner_id == ""
+        assert ad_core.interstitial_id == ""
+        assert ad_core.rewarded_id == ""
+    
+    @pytest.fixture
+    def admob_env_vars(self):
+        """Fixture to set and cleanup AdMob environment variables"""
+        import os
+        old_app_id = os.environ.get("ADMOB_APP_ID")
+        old_banner_id = os.environ.get("ADMOB_BANNER_ID")
+        os.environ["ADMOB_APP_ID"] = "ca-app-pub-env~1234567890"
+        os.environ["ADMOB_BANNER_ID"] = "ca-app-pub-env/1234567890"
+        yield
+        if old_app_id is not None:
+            os.environ["ADMOB_APP_ID"] = old_app_id
+        else:
+            os.environ.pop("ADMOB_APP_ID", None)
+        if old_banner_id is not None:
+            os.environ["ADMOB_BANNER_ID"] = old_banner_id
+        else:
+            os.environ.pop("ADMOB_BANNER_ID", None)
 
-
+    def test_config_loads_env_vars(self, admob_env_vars):
+        """Test that Config properly loads AdMob IDs from environment variables"""
+        from megabot.config import Config
+        
+        config = Config()
+        
+        assert config.get("advertising.app_id") == "ca-app-pub-env~1234567890"
+        assert config.get("advertising.banner_id") == "ca-app-pub-env/1234567890"
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
