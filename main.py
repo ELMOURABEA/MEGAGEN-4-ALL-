@@ -3,7 +3,7 @@ Main entry point for MEGA-Bot
 """
 import asyncio
 import sys
-from megabot import MegaBot, Config, __version__, setup_logging
+from megabot import MegaBot, Config, __version__
 
 
 async def demo():

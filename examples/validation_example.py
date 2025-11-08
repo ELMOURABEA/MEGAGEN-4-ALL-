@@ -112,7 +112,10 @@ async def validation_example():
     print(f"\nOriginal query: '{dirty_query}'")
     print("Submitting to bot (automatically sanitized)...")
     result = await bot.query(dirty_query)
-    print("✓ Query processed safely (dangerous content removed)")
+    if "error" in result:
+        print(f"Error: {result['error']}")
+    else:
+        print("✓ Query processed safely (dangerous content removed)")
     
     await bot.stop()
     
