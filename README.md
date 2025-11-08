@@ -243,6 +243,31 @@ synthesis = result['synthesis']
 # Contains unified insights from all platforms
 ```
 
+### Input Validation & Security
+
+Automatic validation and sanitization of user inputs:
+
+```python
+from megabot import validate_query, validate_topic
+
+# Validate queries before processing
+is_valid, error = validate_query("Your query here")
+
+# Validate research topics
+is_valid, error = validate_topic("Your topic here")
+```
+
+### Logging & Monitoring
+
+Comprehensive logging for debugging and monitoring:
+
+```python
+from megabot import setup_logging
+
+# Configure logging level
+setup_logging("INFO")  # Options: DEBUG, INFO, WARNING, ERROR, CRITICAL
+```
+
 ## 📖 Documentation
 
 For detailed documentation, see [DOCUMENTATION.md](DOCUMENTATION.md)
@@ -263,6 +288,14 @@ Run tests:
 pip install -r requirements.txt
 pytest
 ```
+
+Current test coverage: 28 tests covering:
+- Configuration management
+- AI platform integrations
+- Core functionality
+- Database operations
+- Workflow components
+- Input validation and utilities
 
 ## 🤝 Contributing
 

@@ -260,5 +260,87 @@ class TestWorkflow:
         assert pm.has_permission("database", "write") is False
 
 
+class TestUtils:
+    """Test utility functions"""
+    
+    def test_validate_query_valid(self):
+        """Test validating a valid query"""
+        from megabot.utils import validate_query
+        
+        is_valid, error = validate_query("What is AI?")
+        assert is_valid is True
+        assert error is None
+    
+    def test_validate_query_empty(self):
+        """Test validating an empty query"""
+        from megabot.utils import validate_query
+        
+        is_valid, error = validate_query("")
+        assert is_valid is False
+        assert error is not None
+    
+    def test_validate_query_too_long(self):
+        """Test validating a query that's too long"""
+        from megabot.utils import validate_query
+        
+        long_query = "a" * 10001
+        is_valid, error = validate_query(long_query)
+        assert is_valid is False
+        assert "exceeds maximum length" in error
+    
+    def test_validate_query_dangerous(self):
+        """Test validating a query with dangerous content"""
+        from megabot.utils import validate_query
+        
+        is_valid, error = validate_query("Hello <script>alert('xss')</script>")
+        assert is_valid is False
+        assert "unsafe content" in error
+    
+    def test_validate_topic_valid(self):
+        """Test validating a valid topic"""
+        from megabot.utils import validate_topic
+        
+        is_valid, error = validate_topic("Machine Learning")
+        assert is_valid is True
+        assert error is None
+    
+    def test_validate_topic_empty(self):
+        """Test validating an empty topic"""
+        from megabot.utils import validate_topic
+        
+        is_valid, error = validate_topic("")
+        assert is_valid is False
+        assert error is not None
+    
+    def test_sanitize_input(self):
+        """Test input sanitization"""
+        from megabot.utils import sanitize_input
+        
+        dirty = "Hello <script>alert('xss')</script> World"
+        clean = sanitize_input(dirty)
+        assert "<script>" not in clean
+        assert "Hello" in clean
+        assert "World" in clean
+    
+    def test_truncate_text(self):
+        """Test text truncation"""
+        from megabot.utils import truncate_text
+        
+        long_text = "a" * 200
+        truncated = truncate_text(long_text, max_length=50)
+        assert len(truncated) == 50
+        assert truncated.endswith("...")
+    
+    def test_logging_setup(self):
+        """Test logging setup"""
+        from megabot.utils import setup_logging, get_logger
+        
+        logger = setup_logging("INFO")
+        assert logger is not None
+        
+        logger2 = get_logger("test")
+        assert logger2 is not None
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

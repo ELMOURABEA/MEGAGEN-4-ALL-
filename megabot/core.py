@@ -12,6 +12,7 @@ from .integrations import (
 )
 from .database import ResearchEngine, DatabaseStorage
 from .workflow import TaskScheduler, PermissionManager, AutoUpdateManager
+from .utils import get_logger, validate_query, validate_topic, sanitize_input
 
 
 class MegaBot:
@@ -33,6 +34,7 @@ class MegaBot:
             config: Configuration object (creates default if not provided)
         """
         self.config = config or Config()
+        self.logger = get_logger("core")
         
         # Initialize database storage
         self.storage = DatabaseStorage(self.config.get("database.path", "megabot.db"))
@@ -62,6 +64,8 @@ class MegaBot:
         # Track running state
         self.running = False
         self.background_tasks: List[asyncio.Task] = []
+        
+        self.logger.debug("MEGA-Bot initialized successfully")
     
     def _init_integrations(self) -> List:
         """Initialize all AI platform integrations"""
@@ -133,16 +137,33 @@ class MegaBot:
         Returns:
             Aggregated responses from all platforms
         """
+        # Validate input
+        is_valid, error_msg = validate_query(prompt)
+        if not is_valid:
+            self.logger.error(f"Invalid query: {error_msg}")
+            return {"error": error_msg, "responses": {}}
+        
+        # Sanitize input
+        prompt = sanitize_input(prompt)
+        
         if not self.permission_manager.check_api_access():
+            self.logger.warning("API access permission denied")
             return {"error": "API access permission denied"}
         
+        self.logger.info(f"Querying all platforms: {prompt[:100]}...")
         print(f"Querying all platforms: {prompt}")
-        result = await self.research_engine.query_all_platforms(prompt, context)
         
-        # Add synthesis
-        result["synthesis"] = self._synthesize_responses(result["responses"])
-        
-        return result
+        try:
+            result = await self.research_engine.query_all_platforms(prompt, context)
+            
+            # Add synthesis
+            result["synthesis"] = self._synthesize_responses(result["responses"])
+            
+            self.logger.info(f"Query completed successfully, {len(result['responses'])} platforms responded")
+            return result
+        except Exception as e:
+            self.logger.error(f"Query failed: {str(e)}", exc_info=True)
+            return {"error": f"Query failed: {str(e)}", "responses": {}}
     
     async def research(self, topic: str, depth: str = "deep") -> Dict[str, Any]:
         """
@@ -155,18 +176,40 @@ class MegaBot:
         Returns:
             Comprehensive research results
         """
+        # Validate topic
+        is_valid, error_msg = validate_topic(topic)
+        if not is_valid:
+            self.logger.error(f"Invalid topic: {error_msg}")
+            return {"error": error_msg, "platforms_used": [], "synthesis": {}}
+        
+        # Sanitize input
+        topic = sanitize_input(topic)
+        
+        # Validate depth
+        valid_depths = ["shallow", "medium", "deep"]
+        if depth not in valid_depths:
+            self.logger.warning(f"Invalid depth '{depth}', defaulting to 'medium'")
+            depth = "medium"
+        
         if not self.permission_manager.check_research_access():
+            self.logger.warning("Research permission denied")
             return {"error": "Research permission denied"}
         
+        self.logger.info(f"Performing {depth} research on: {topic}")
         print(f"Performing {depth} research on: {topic}")
         
-        result = await self.research_engine.deep_research(
-            topic,
-            depth,
-            use_cache=self.config.get("database.research_cache_enabled", True)
-        )
-        
-        return result
+        try:
+            result = await self.research_engine.deep_research(
+                topic,
+                depth,
+                use_cache=self.config.get("database.research_cache_enabled", True)
+            )
+            
+            self.logger.info(f"Research completed successfully for: {topic}")
+            return result
+        except Exception as e:
+            self.logger.error(f"Research failed: {str(e)}", exc_info=True)
+            return {"error": f"Research failed: {str(e)}", "platforms_used": [], "synthesis": {}}
     
     async def sync_documents(self):
         """Synchronize latest documents from all platforms"""
