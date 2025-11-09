@@ -15,6 +15,7 @@ from .workflow import TaskScheduler, PermissionManager, AutoUpdateManager
 from .utils import get_logger, validate_query, validate_topic, sanitize_input
 from .monetization import MonetizationManager
 from .advertising import AdvertisingCore
+from .agenthq import AgentHQCoordinator
 
 
 class MegaBot:
@@ -79,6 +80,17 @@ class MegaBot:
             self.logger.info("Advertising core initialized")
         else:
             self.advertising = None
+        
+        # Initialize Agent HQ (if enabled)
+        if self.config.get("features.agent_hq", True):
+            self.agent_hq = AgentHQCoordinator(
+                self.integrations,
+                self.storage,
+                self.logger
+            )
+            self.logger.info("Agent HQ Coordinator initialized")
+        else:
+            self.agent_hq = None
         
         # Track running state
         self.running = False
@@ -303,6 +315,14 @@ class MegaBot:
         if self.advertising:
             status["advertising"] = self.advertising.get_config()
         
+        # Add Agent HQ info if enabled
+        if self.agent_hq:
+            agent_hq_status = self.agent_hq.get_status()
+            agent_hq_status["enabled"] = True
+            status["agent_hq"] = agent_hq_status
+        else:
+            status["agent_hq"] = {"enabled": False}
+        
         return status
     
     def get_capabilities(self) -> List[str]:
@@ -472,3 +492,132 @@ class MegaBot:
             
             return result
         return {"status": "disabled", "message": "Advertising not enabled"}
+    
+    # Agent HQ Methods
+    
+    async def orchestrate_agents(self, task: str, agents: Optional[List[str]] = None,
+                                 mode: str = "sequential") -> Dict[str, Any]:
+        """
+        Orchestrate multiple agents to complete a task
+        
+        Args:
+            task: Task description
+            agents: List of agent names to use (None = all active agents)
+            mode: Orchestration mode (sequential, parallel, adaptive)
+            
+        Returns:
+            Results from agent orchestration
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info(f"Orchestrating agents for task: {task[:50]}...")
+        return await self.agent_hq.orchestrate(task, agents, mode)
+    
+    def list_agents(self, status: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        List all registered agents in Agent HQ
+        
+        Args:
+            status: Optional filter by status (active, available, inactive)
+            
+        Returns:
+            List of agent information
+        """
+        if not self.agent_hq:
+            return []
+        
+        return self.agent_hq.list_agents(status)
+    
+    def get_agent_info(self, name: str) -> Optional[Dict[str, Any]]:
+        """
+        Get information about a specific agent
+        
+        Args:
+            name: Agent name
+            
+        Returns:
+            Agent information or None
+        """
+        if not self.agent_hq:
+            return None
+        
+        return self.agent_hq.get_agent(name)
+    
+    async def agent_hq_self_update(self) -> Dict[str, Any]:
+        """
+        Trigger Agent HQ self-update process
+        
+        Returns:
+            Update results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info("Triggering Agent HQ self-update...")
+        return await self.agent_hq.self_update()
+    
+    async def agent_hq_self_build(self, requirements: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Trigger Agent HQ self-build process to create new workflows
+        
+        Args:
+            requirements: Requirements for the new workflow
+            
+        Returns:
+            Build results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info("Triggering Agent HQ self-build...")
+        return await self.agent_hq.self_build(requirements)
+    
+    def get_agent_hq_status(self) -> Dict[str, Any]:
+        """
+        Get Agent HQ status
+        
+        Returns:
+            Status information including agents and orchestrators
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        status = self.agent_hq.get_status()
+        status["enabled"] = True
+        return status
+    
+    async def create_langchain(self, steps: List[str], initial_text: str) -> Dict[str, Any]:
+        """
+        Create and execute a simple LangChain workflow
+        
+        Args:
+            steps: List of prompt templates
+            initial_text: Initial text to process
+            
+        Returns:
+            Chain execution results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info(f"Creating LangChain with {len(steps)} steps")
+        return await self.agent_hq.langchain.create_simple_chain(steps, initial_text)
+    
+    async def create_langgraph(self, steps: List[Dict[str, Any]], 
+                              initial_state: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Create and execute a simple LangGraph workflow
+        
+        Args:
+            steps: List of step definitions with 'name' and 'operation'
+            initial_state: Initial state
+            
+        Returns:
+            Graph execution results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info(f"Creating LangGraph with {len(steps)} steps")
+        return await self.agent_hq.langgraph.create_simple_graph(steps, initial_state)
