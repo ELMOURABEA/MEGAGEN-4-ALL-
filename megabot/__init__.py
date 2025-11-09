@@ -2,7 +2,7 @@
 MEGA-Bot - A unified AI agent integrating multiple platforms
 """
 
-__version__ = "1.2.0"
+__version__ = "2.0.0"
 __author__ = "MEGAGENT Team"
 
 from .core import MegaBot
@@ -19,6 +19,7 @@ from .agenthq import (
     EnterpriseCloudOctogent
 )
 from .octogen import Octogen
+from .oauth import GitHubOAuth, CrossPlatformOAuth
 
 __all__ = [
     "MegaBot", "Config", 
@@ -27,5 +28,6 @@ __all__ = [
     "AdvertisingCore", "AdPlacement",
     "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator",
     "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent",
-    "Octogen"
+    "Octogen",
+    "GitHubOAuth", "CrossPlatformOAuth"
 ]

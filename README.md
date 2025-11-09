@@ -8,7 +8,7 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v1.2.0)
+[![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v2.0.0)
 [![Tests](https://img.shields.io/badge/tests-87%20passing-success.svg)](tests/)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Ready-blue.svg)](action.yml)
 [![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Published-orange.svg)](https://github.com/marketplace/actions/megagent-ai-multi-platform-integration)
@@ -16,6 +16,16 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 </div>
 
 ## 🚀 Features
+
+### 🆕 NEW in V2.0: Cross-Platform OAuth Integration
+
+- **🔐 GitHub OAuth**: Native GitHub authentication for all platforms
+- **📱 Mobile Apps**: iOS and Android with deep linking
+- **💻 Desktop Apps**: Windows, macOS, Linux with auto-updates
+- **🌐 Web App**: Progressive Web App with offline support
+- **🔗 Universal Access**: Works anywhere - mobile, web, desktop
+
+### Core Features
 
 - **🐙 OCTOGEN**: The Ultimate 10-in-1 SuperAgent - All agents unified into ONE
 - **✨ Dream Achievement**: Achieve any dream in minutes with 95% success rate
