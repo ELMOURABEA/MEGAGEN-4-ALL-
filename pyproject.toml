@@ -40,12 +40,9 @@ dev = [
     "black>=23.0.0",
     "flake8>=6.0.0",
 ]
-api = [
-    "fastapi>=0.104.0",
-    "uvicorn>=0.24.0",
-]
+api = []
 all = [
-    "megaagent[dev,api]",
+    "megaagent[dev]",
 ]
 
 [project.urls]
