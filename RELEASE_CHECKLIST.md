@@ -144,7 +144,7 @@ git push origin v1.2.0
 ## GitHub Marketplace Submission Notes
 
 ### Action Information
-- **Name**: MEGAGENT - AI Multi-Platform Integration
+- **Name**: MeGAGen-4-all
 - **Description**: Unified AI agent integrating GitHub Copilot, Gemini, ChatGPT, and Grok for comprehensive research and automation
 - **Icon**: zap (⚡)
 - **Color**: blue
