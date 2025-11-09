@@ -3,6 +3,14 @@
 
 # Standard library async support (no additional package needed for asyncio)
 
+# Agent HQ and AI Framework Dependencies
+langchain>=0.1.0
+langchain-core>=0.1.0
+langchain-openai>=0.0.5
+langchain-google-genai>=0.0.5
+langgraph>=0.0.20
+langchain-anthropic>=0.1.0
+
 # Optional: Add these packages if you want to integrate with actual APIs
 # openai>=1.0.0          # For ChatGPT integration
 # google-generativeai    # For Gemini integration

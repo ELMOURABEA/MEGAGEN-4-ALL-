@@ -1,0 +1,85 @@
+{
+  "mobile": {
+    "name": "MEGAGENT OCTOGEN",
+    "displayName": "MEGAGENT",
+    "version": "2.0.0",
+    "description": "The Ultimate 10-in-1 AI SuperAgent with OAuth",
+    
+    "ios": {
+      "bundleId": "com.megagent.octogen",
+      "buildNumber": "1",
+      "minimumOsVersion": "14.0",
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleDisplayName": "MEGAGENT",
+        "CFBundleURLTypes": [
+          {
+            "CFBundleURLSchemes": ["megagent"],
+            "CFBundleURLName": "com.megagent.octogen"
+          }
+        ],
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": false
+        },
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "NSCameraUsageDescription": "MEGAGENT needs camera access for code scanning",
+        "NSMicrophoneUsageDescription": "MEGAGENT needs microphone for voice commands"
+      },
+      "entitlements": {
+        "com.apple.developer.associated-domains": ["applinks:megagent.app"]
+      }
+    },
+    
+    "android": {
+      "package": "com.megagent.octogen",
+      "versionCode": 1,
+      "minSdkVersion": 26,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
+      "permissions": [
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "CAMERA",
+        "RECORD_AUDIO"
+      ],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": {
+            "scheme": "megagent",
+            "host": "oauth"
+          }
+        }
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-foreground.png",
+        "backgroundColor": "#000000"
+      }
+    },
+    
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#000000"
+    },
+    
+    "icon": "./assets/icon.png",
+    
+    "orientation": "portrait",
+    
+    "updates": {
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 30000
+    },
+    
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    
+    "extra": {
+      "githubOAuthClientId": "${GITHUB_OAUTH_CLIENT_ID}",
+      "apiBaseUrl": "https://api.github.com"
+    }
+  }
+}
