@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "megaagent"
+version = "1.0.0"
+authors = [
+    {name = "MEGAGENT Team", email = "contact@megagent.dev"}
+]
+description = "XXXL MEGA BOT - Unified AI agent integrating multiple platforms for research, automation, and intelligent workflows"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+keywords = ["ai", "bot", "agent", "research", "automation", "copilot", "gemini", "chatgpt", "grok"]
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "flask>=2.3.0",
+    "flask-cors>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+]
+api = []
+all = [
+    "megaagent[dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/ELMOURABEA/MEGAGENT"
+Documentation = "https://github.com/ELMOURABEA/MEGAGENT/blob/main/DOCUMENTATION.md"
+Repository = "https://github.com/ELMOURABEA/MEGAGENT"
+Issues = "https://github.com/ELMOURABEA/MEGAGENT/issues"
+
+[project.scripts]
+megabot = "megabot.cli:main"
+megabot-server = "megabot.server:main"
+
+[tool.setuptools]
+packages = ["megabot", "megabot.integrations", "megabot.database", "megabot.workflow", "megabot.api"]
+
+[tool.setuptools.package-data]
+megabot = ["*.json", "*.yaml", "*.yml"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+asyncio_mode = "auto"

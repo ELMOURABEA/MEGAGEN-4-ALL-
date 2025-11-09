@@ -3,6 +3,16 @@
 
 # Standard library async support (no additional package needed for asyncio)
 
+# Configuration
+python-dotenv>=1.0.0
+
+# API Server dependencies
+flask>=2.3.0
+flask-cors>=4.0.0
+
+# API Client (optional)
+requests>=2.31.0
+
 # Optional: Add these packages if you want to integrate with actual APIs
 # openai>=1.0.0          # For ChatGPT integration
 # google-generativeai    # For Gemini integration
@@ -11,6 +21,3 @@
 # Development dependencies
 pytest>=7.0.0
 pytest-asyncio>=0.21.0
-
-# Configuration
-python-dotenv>=1.0.0
