@@ -10,7 +10,7 @@ setup(
     name="megabot",
     version="2.0.0",
     author="MEGAGENT Team",
-    description="MEGABOT OCTOGEN V2.0 - The Ultimate 10-in-1 AI SuperAgent with OAuth Integration",
+    description="OCTOGEN V2.0 - The Ultimate 10-in-1 AI SuperAgent with OAuth Integration",
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
