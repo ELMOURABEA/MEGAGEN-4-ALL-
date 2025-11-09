@@ -18,6 +18,7 @@ from .agenthq import (
     CloudOctopus,
     EnterpriseCloudOctogent
 )
+from .octogen import Octogen
 
 __all__ = [
     "MegaBot", "Config", 
@@ -25,5 +26,6 @@ __all__ = [
     "MonetizationManager", "SubscriptionTier",
     "AdvertisingCore", "AdPlacement",
     "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator",
-    "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent"
+    "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent",
+    "Octogen"
 ]
