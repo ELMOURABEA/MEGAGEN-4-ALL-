@@ -11,7 +11,7 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 [![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v2.0.0)
 [![Tests](https://img.shields.io/badge/tests-87%20passing-success.svg)](tests/)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Ready-blue.svg)](action.yml)
-[![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Published-orange.svg)](https://github.com/marketplace/actions/megagent-ai-multi-platform-integration)
+[![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-MeGAGen--4--all-orange.svg)](https://github.com/marketplace/actions/megagen-4-all)
 
 </div>
 

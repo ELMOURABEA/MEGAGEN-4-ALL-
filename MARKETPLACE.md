@@ -1,4 +1,4 @@
-# MEGAGENT - GitHub Marketplace Guide
+at main////coll# MEGAGENT - GitHub Marketplace Guide
 
 ## Overview
 
@@ -238,7 +238,7 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 - **Repository**: https://github.com/ELMOURABEA/MEGAGENT
 - **Issues**: https://github.com/ELMOURABEA/MEGAGENT/issues
-- **Marketplace**: https://github.com/marketplace/actions/megagent-ai-multi-platform-integration
+- **Marketplace**: https://github.com/marketplace/actions/megagen-4-all
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
 
 ---

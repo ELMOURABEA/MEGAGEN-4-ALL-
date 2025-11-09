@@ -3,6 +3,12 @@ Example: Using Monetization and Advertising Features
 Demonstrates the v1.2.0 monetization and advertising system
 """
 import asyncio
+import sys
+import os
+
+# Add parent directory to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from megabot import MegaBot, Config, MonetizationManager
 
 

@@ -71,7 +71,7 @@ git push origin v1.2.0
 2. **Action Details**
    
    **Basic Information:**
-   - **Action name**: MEGAGENT - AI Multi-Platform Integration
+   - **Action name**: MeGAGen-4-all
    - **Short description**: Unified AI agent integrating GitHub Copilot, Gemini, ChatGPT, and Grok for comprehensive research and automation
    - **Icon**: ⚡ zap (already in action.yml)
    - **Color**: blue (already in action.yml)
@@ -119,7 +119,7 @@ git push origin v1.2.0
 ### Step 4: Verify Marketplace Listing
 
 1. **Check Your Listing**
-   - Visit: https://github.com/marketplace/actions/megagent-ai-multi-platform-integration
+   - Visit: https://github.com/marketplace/actions/megagen-4-all
    - Verify all information displays correctly
    - Test the "Use this Action" button
 
@@ -153,7 +153,7 @@ git push origin v1.2.0
 1. **Add Marketplace Badge to README**
    Already done! The README includes:
    ```markdown
-   [![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Published-orange.svg)](https://github.com/marketplace/actions/megagent-ai-multi-platform-integration)
+   [![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-MeGAGen--4--all-orange.svg)](https://github.com/marketplace/actions/megagen-4-all)
    ```
 
 2. **Add Marketplace Link to Documentation**
