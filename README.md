@@ -9,7 +9,7 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v1.2.0)
-[![Tests](https://img.shields.io/badge/tests-39%20passing-success.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-74%20passing-success.svg)](tests/)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Ready-blue.svg)](action.yml)
 [![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-Published-orange.svg)](https://github.com/marketplace/actions/megagent-ai-multi-platform-integration)
 
@@ -17,17 +17,34 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 
 ## 🚀 Features
 
+- **🎯 Agent HQ**: Orchestrate any agent, any time, anywhere - Native GitHub agent integration
 - **🔬 Deep Research Engine**: Comprehensive database research across multiple AI platforms
 - **🤖 Multi-Platform Integration**: Unified access to Co-Pilot, Gemini 2.5 Pro, ChatGPT 5, and Grok 4 Super
+- **🔗 LangChain Integration**: Build AI workflows with chains, prompts, and tools
+- **📊 LangGraph Integration**: Add memory, branching, and feedback loops to AI workflows
 - **⚡ Multi-Tasking**: Concurrent task execution with priority-based scheduling
 - **🔄 Auto-Update System**: Automatic synchronization with latest platform documentation
 - **🔐 Full Permission Management**: Comprehensive access control system
 - **💾 Intelligent Caching**: Fast response times with smart result caching
-- **📊 Workflow Automation**: Complex workflow execution with multiple steps
+- **🤖 Self-Update & Self-Build**: Autonomous capability updates and workflow creation
 - **💰 Monetization System**: Flexible subscription tiers (Free, Pro, Full Energy)
 - **📱 Advertising Integration**: Google AdMob support with banner and rewarded ads
 
 ## 🏗️ Architecture
+
+### Agent HQ - Native GitHub Agent Orchestration
+
+Agent HQ transforms GitHub into an open ecosystem that unites every agent on a single platform. Coding agents from **Anthropic (Claude)**, **OpenAI (GPT)**, **Google (Gemini)**, **Cognition (Devin)**, **xAI (Grok)**, **Jules**, and more work seamlessly together.
+
+**Key Features:**
+- **Multi-Agent Orchestration**: Coordinate multiple agents (sequential, parallel, adaptive modes)
+- **LangChain Integration**: Build AI workflows with chains, prompts, and tools
+- **LangGraph Integration**: Add memory, branching, and feedback loops
+- **Self-Update**: Automatically sync with latest agent capabilities
+- **Self-Build**: Dynamically create new workflows based on requirements
+- **Native GitHub Flow**: Agents work the way you already work
+
+### Core AI Platforms
 
 MEGA-Bot integrates four powerful AI platforms:
 
@@ -35,6 +52,16 @@ MEGA-Bot integrates four powerful AI platforms:
 2. **Gemini 2.5 Pro** - Multimodal understanding with 2M token context
 3. **ChatGPT 5** - Advanced reasoning and problem-solving
 4. **Grok 4 Super** - Real-time data and social media insights
+
+### Supported Agents in Agent HQ
+
+- **GitHub Copilot** (OpenAI) - Code generation, review, documentation
+- **Claude** (Anthropic) - Advanced reasoning, analysis, code generation
+- **GPT** (OpenAI) - General purpose, reasoning, creativity
+- **Gemini** (Google) - Multimodal understanding, analysis
+- **Grok** (xAI) - Real-time data, social media insights
+- **Devin** (Cognition) - Autonomous coding, debugging, deployment
+- **Jules** (Jules) - Code agent, task automation
 
 ## 📦 Installation
 
@@ -188,6 +215,115 @@ Automatically sync latest platform updates:
 ```python
 await bot.sync_documents()
 updates = bot.get_updates(limit=10)
+```
+
+### Agent HQ - Multi-Agent Orchestration
+
+Orchestrate multiple AI agents to work together:
+
+```python
+# Sequential orchestration - agents work one after another
+result = await bot.orchestrate_agents(
+    task="Write and test a Python function",
+    agents=["copilot", "gpt"],
+    mode="sequential"
+)
+
+# Parallel orchestration - all agents work simultaneously
+result = await bot.orchestrate_agents(
+    task="Explain quantum computing",
+    agents=["gpt", "gemini", "claude"],
+    mode="parallel"
+)
+
+# Adaptive orchestration - intelligent routing with LangGraph
+result = await bot.orchestrate_agents(
+    task="Analyze and optimize code",
+    mode="adaptive"
+)
+
+# List available agents
+agents = bot.list_agents()
+for agent in agents:
+    print(f"{agent['name']} - {agent['platform']} ({agent['status']})")
+```
+
+### LangChain - Build AI Workflows
+
+Create sequences of AI operations:
+
+```python
+# Simple chain: Summarize → Generate Title
+steps = [
+    "Summarize the following text in 2 sentences:",
+    "Create a catchy title for this summary:"
+]
+result = await bot.create_langchain(steps, "Your text here")
+
+# Access LangChain directly for advanced features
+langchain = bot.agent_hq.langchain
+
+# Create custom prompt templates
+langchain.create_prompt_template(
+    "code_review",
+    "Review this {language} code:\n{code}"
+)
+
+# Register custom tools
+def formatter(text):
+    return text.strip().upper()
+
+langchain.register_tool("uppercase", formatter)
+
+# Use memory for context
+langchain.set_memory("project_type", "web_app")
+project = langchain.get_memory("project_type")
+```
+
+### LangGraph - Add Memory and Branching
+
+Build intelligent workflows with state management:
+
+```python
+# Simple graph with steps
+async def analyze(state, integrations):
+    return {"analyzed": True}
+
+async def process(state, integrations):
+    return {"processed": True}
+
+steps = [
+    {"name": "analyze", "operation": analyze},
+    {"name": "process", "operation": process}
+]
+result = await bot.create_langgraph(steps, {"input": "data"})
+
+# Access LangGraph for advanced features
+langgraph = bot.agent_hq.langgraph
+
+# Create graphs with decision nodes
+langgraph.create_graph("workflow")
+# Add nodes, connect them, create feedback loops
+```
+
+### Self-Update and Self-Build
+
+Autonomous capability management:
+
+```python
+# Self-update: Check for new agent capabilities
+update_result = await bot.agent_hq_self_update()
+print(f"Updates found: {len(update_result['updates'])}")
+
+# Self-build: Create custom workflows dynamically
+build_result = await bot.agent_hq_self_build({
+    "type": "chain",
+    "name": "custom_workflow",
+    "steps": [
+        {"name": "analyze", "prompt": "Analyze {input}"},
+        {"name": "recommend", "prompt": "Recommend based on {analyze}"}
+    ]
+})
 ```
 
 ## 🎯 Use Cases
@@ -348,6 +484,45 @@ Topics covered:
 - Troubleshooting
 - Best practices
 
+## 📝 Examples
+
+Comprehensive examples are available in the `examples/` directory:
+
+### Basic Usage
+```bash
+python examples/basic_usage.py
+```
+Basic MEGAGENT operations: query, research, and workflows.
+
+### Agent HQ Demo
+```bash
+python examples/agent_hq_example.py
+```
+Complete Agent HQ demonstration including:
+- Multi-agent orchestration (sequential, parallel, adaptive)
+- LangChain workflow building
+- LangGraph state management
+- Self-update and self-build capabilities
+- Custom prompt templates and tools
+
+### Advanced Research
+```bash
+python examples/advanced_research.py
+```
+Deep research capabilities across all platforms.
+
+### Workflow Automation
+```bash
+python examples/workflow_automation.py
+```
+Complex workflow execution with scheduling and permissions.
+
+### Monetization & Advertising
+```bash
+python examples/monetization_example.py
+```
+Subscription tiers and advertising integration.
+
 ## 🧪 Testing
 
 Run tests:
@@ -357,7 +532,7 @@ pip install -r requirements.txt
 pytest
 ```
 
-Current test coverage: 39 tests covering:
+Current test coverage: 74 tests covering:
 - Configuration management
 - AI platform integrations
 - Core functionality
@@ -366,6 +541,10 @@ Current test coverage: 39 tests covering:
 - Input validation and utilities
 - Monetization and subscription tiers
 - Advertising integration
+- **Agent HQ orchestration** (new)
+- **LangChain workflows** (new)
+- **LangGraph state management** (new)
+- **Multi-agent coordination** (new)
 
 ## 🤝 Contributing
 

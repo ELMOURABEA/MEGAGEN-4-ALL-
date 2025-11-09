@@ -8,6 +8,8 @@ from datetime import datetime
 
 from .langchain_integration import LangChainOrchestrator
 from .langgraph_integration import LangGraphOrchestrator, GraphNode, NodeType
+from .octopus_brain import OctopusBrain
+from .cloud_octopus import CloudOctopus
 
 
 class AgentHQCoordinator:
@@ -42,16 +44,29 @@ class AgentHQCoordinator:
         self.langchain = LangChainOrchestrator(integrations, logger)
         self.langgraph = LangGraphOrchestrator(integrations, logger)
         
+        # Initialize Octopus Brain 🧠
+        self.octopus_brain = OctopusBrain(logger)
+        
+        # Initialize Cloud Octopus ☁️
+        self.cloud_octopus = CloudOctopus(logger=logger)
+        
+        # Initialize Enterprise Cloud Octogent (if configured)
+        from .enterprise_cloud import EnterpriseCloudOctogent
+        self.enterprise_octogent = EnterpriseCloudOctogent(logger=logger)
+        
         # Agent registry
         self.agents: Dict[str, Dict[str, Any]] = {}
         self._register_default_agents()
+        
+        # Register agents with Octopus Brain
+        self._register_agents_with_brain()
         
         # Self-update tracking
         self.last_update = datetime.now()
         self.update_history: List[Dict[str, Any]] = []
         
         if self.logger:
-            self.logger.info("Agent HQ Coordinator initialized")
+            self.logger.info("🐙 Agent HQ Coordinator initialized with Octopus Brain")
     
     def _register_default_agents(self) -> None:
         """Register default AI agents from various platforms"""
@@ -104,11 +119,45 @@ class AgentHQCoordinator:
                 "provider": "Jules",
                 "capabilities": ["code_agent", "task_automation"],
                 "status": "available"
+            },
+            {
+                "name": "deepseek",
+                "platform": "DeepSeek",
+                "provider": "DeepSeek",
+                "capabilities": ["code_intelligence", "reasoning", "analysis"],
+                "status": "available"
+            },
+            {
+                "name": "perplexity",
+                "platform": "Perplexity",
+                "provider": "Perplexity",
+                "capabilities": ["search", "research", "real_time_data"],
+                "status": "available"
+            },
+            {
+                "name": "comet",
+                "platform": "Comet",
+                "provider": "Comet",
+                "capabilities": ["ml_tracking", "experiment_management", "model_optimization"],
+                "status": "available"
             }
         ]
         
         for agent in default_agents:
             self.register_agent(**agent)
+    
+    def _register_agents_with_brain(self) -> None:
+        """Register all agents as tentacles in the Octopus Brain"""
+        for agent_name, agent_info in self.agents.items():
+            # Determine specialty based on capabilities
+            specialty = agent_info["capabilities"][0] if agent_info["capabilities"] else "general"
+            
+            self.octopus_brain.register_tentacle(
+                name=agent_name,
+                capabilities=agent_info["capabilities"],
+                provider=agent_info["provider"],
+                specialty=specialty
+            )
     
     def register_agent(self, name: str, platform: str, provider: str,
                       capabilities: List[str], status: str = "available") -> None:

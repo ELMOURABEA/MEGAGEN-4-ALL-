@@ -621,3 +621,175 @@ class MegaBot:
         
         self.logger.info(f"Creating LangGraph with {len(steps)} steps")
         return await self.agent_hq.langgraph.create_simple_graph(steps, initial_state)
+    
+    # 🐙 Octopus Brain Methods
+    
+    def get_octopus_brain_status(self) -> Dict[str, Any]:
+        """
+        Get Octopus Brain status
+        
+        Returns:
+            Brain status information
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        return self.agent_hq.octopus_brain.get_brain_status()
+    
+    def get_tentacle_status(self, tentacle_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Get status of a specific tentacle (agent)
+        
+        Args:
+            tentacle_name: Name of the tentacle
+            
+        Returns:
+            Tentacle status or None
+        """
+        if not self.agent_hq:
+            return None
+        
+        return self.agent_hq.octopus_brain.get_tentacle_status(tentacle_name)
+    
+    def get_all_tentacles(self) -> List[Dict[str, Any]]:
+        """
+        Get status of all tentacles
+        
+        Returns:
+            List of tentacle statuses
+        """
+        if not self.agent_hq:
+            return []
+        
+        return self.agent_hq.octopus_brain.get_all_tentacles()
+    
+    async def octopus_coordinate(self, task: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """
+        Use Octopus Brain to coordinate task execution
+        
+        Args:
+            task: Task description
+            context: Additional context
+            
+        Returns:
+            Coordination results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        return await self.agent_hq.octopus_brain.coordinate(task, context)
+    
+    # ☁️ Cloud Deployment Methods
+    
+    async def deploy_to_cloud(self, provider: str = "aws", regions: Optional[List[str]] = None) -> Dict[str, Any]:
+        """
+        Deploy MEGAGENT to cloud
+        
+        Args:
+            provider: Cloud provider (aws, azure, gcp, etc.)
+            regions: List of regions to deploy to
+            
+        Returns:
+            Deployment results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info(f"☁️ Deploying to {provider}")
+        return await self.agent_hq.cloud_octopus.deploy_to_cloud(provider, regions)
+    
+    async def provision_cloud_storage(self, storage_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Provision massive cloud storage
+        
+        Args:
+            storage_config: Storage configuration
+            
+        Returns:
+            Provisioning results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        return await self.agent_hq.cloud_octopus.provision_big_space(storage_config)
+    
+    def get_cloud_status(self) -> Dict[str, Any]:
+        """
+        Get cloud deployment status
+        
+        Returns:
+            Cloud status information
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        return self.agent_hq.cloud_octopus.get_cloud_status()
+    
+    # 🏢 Enterprise Cloud Methods
+    
+    async def deploy_to_enterprise_cloud(self, infrastructure: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Deploy Big Octogent to your enterprise cloud
+        
+        Args:
+            infrastructure: Your enterprise cloud infrastructure details
+            
+        Returns:
+            Deployment results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        self.logger.info("🐙 Deploying Big Octogent to enterprise cloud")
+        return await self.agent_hq.enterprise_octogent.deploy_to_enterprise_cloud(infrastructure)
+    
+    async def configure_enterprise_infrastructure(self, config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Configure custom enterprise infrastructure settings
+        
+        Args:
+            config: Custom infrastructure configuration
+            
+        Returns:
+            Configuration results
+        """
+        if not self.agent_hq:
+            return {"error": "Agent HQ not enabled"}
+        
+        return await self.agent_hq.enterprise_octogent.configure_custom_infrastructure(config)
+    
+    def get_enterprise_octogent_status(self) -> Dict[str, Any]:
+        """
+        Get Big Octogent status
+        
+        Returns:
+            Octogent status information
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        return self.agent_hq.enterprise_octogent.get_octogent_status()
+    
+    def get_enterprise_capacity(self) -> Dict[str, Any]:
+        """
+        Get enterprise cloud capacity information
+        
+        Returns:
+            Capacity details
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        return self.agent_hq.enterprise_octogent.get_capacity_info()
+    
+    def estimate_enterprise_costs(self) -> Dict[str, Any]:
+        """
+        Estimate enterprise cloud costs
+        
+        Returns:
+            Cost breakdown
+        """
+        if not self.agent_hq:
+            return {"enabled": False}
+        
+        return self.agent_hq.enterprise_octogent.get_cost_estimate()

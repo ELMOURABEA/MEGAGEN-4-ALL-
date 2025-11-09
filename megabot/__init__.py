@@ -10,12 +10,20 @@ from .config import Config
 from .utils import setup_logging, get_logger, validate_query, validate_topic
 from .monetization import MonetizationManager, SubscriptionTier
 from .advertising import AdvertisingCore, AdPlacement
-from .agenthq import AgentHQCoordinator, LangChainOrchestrator, LangGraphOrchestrator
+from .agenthq import (
+    AgentHQCoordinator, 
+    LangChainOrchestrator, 
+    LangGraphOrchestrator,
+    OctopusBrain,
+    CloudOctopus,
+    EnterpriseCloudOctogent
+)
 
 __all__ = [
     "MegaBot", "Config", 
     "setup_logging", "get_logger", "validate_query", "validate_topic",
     "MonetizationManager", "SubscriptionTier",
     "AdvertisingCore", "AdPlacement",
-    "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator"
+    "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator",
+    "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent"
 ]

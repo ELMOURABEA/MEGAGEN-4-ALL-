@@ -290,6 +290,9 @@ class TestAgentHQ:
         assert "grok" in agent_names
         assert "devin" in agent_names
         assert "jules" in agent_names
+        assert "deepseek" in agent_names
+        assert "perplexity" in agent_names
+        assert "comet" in agent_names
     
     def test_list_agents_by_status(self):
         """Test listing agents by status"""
@@ -513,3 +516,190 @@ class TestMegaBotIntegration:
         assert "final_state" in result
         
         await bot.stop()
+
+
+class TestOctopusBrain:
+    """Test Octopus Brain functionality"""
+    
+    def test_octopus_brain_initialization(self):
+        """Test Octopus Brain initialization"""
+        bot = MegaBot()
+        
+        assert bot.agent_hq is not None
+        assert bot.agent_hq.octopus_brain is not None
+    
+    def test_tentacle_registration(self):
+        """Test tentacles are registered in brain"""
+        bot = MegaBot()
+        
+        tentacles = bot.get_all_tentacles()
+        
+        assert len(tentacles) == 10  # All 10 agents
+        assert any(t["name"] == "copilot" for t in tentacles)
+        assert any(t["name"] == "deepseek" for t in tentacles)
+        assert any(t["name"] == "perplexity" for t in tentacles)
+        assert any(t["name"] == "comet" for t in tentacles)
+    
+    def test_get_tentacle_status(self):
+        """Test getting individual tentacle status"""
+        bot = MegaBot()
+        
+        tentacle_status = bot.get_tentacle_status("copilot")
+        
+        assert tentacle_status is not None
+        assert tentacle_status["name"] == "copilot"
+        assert "performance" in tentacle_status
+        assert "capabilities" in tentacle_status
+    
+    def test_brain_status(self):
+        """Test getting brain status"""
+        bot = MegaBot()
+        
+        status = bot.get_octopus_brain_status()
+        
+        assert "tentacles" in status
+        assert status["tentacles"]["total"] == 10
+        assert "memory" in status
+    
+    @pytest.mark.asyncio
+    async def test_octopus_coordination(self):
+        """Test octopus brain coordination"""
+        bot = MegaBot()
+        await bot.start()
+        
+        result = await bot.octopus_coordinate(
+            "Write a Python function",
+            context={"capabilities": ["code_generation"]}
+        )
+        
+        assert "decision" in result
+        assert "tentacle_results" in result
+        
+        await bot.stop()
+
+
+class TestCloudOctopus:
+    """Test Cloud Octopus functionality"""
+    
+    @pytest.mark.asyncio
+    async def test_cloud_deployment(self):
+        """Test cloud deployment"""
+        bot = MegaBot()
+        await bot.start()
+        
+        result = await bot.deploy_to_cloud(
+            provider="aws",
+            regions=["us-east-1", "eu-west-1"]
+        )
+        
+        assert result["provider"] == "aws"
+        assert len(result["regions"]) == 2
+        assert result["status"] == "deployed"
+        assert len(result["endpoints"]) > 0
+        
+        await bot.stop()
+    
+    @pytest.mark.asyncio
+    async def test_cloud_storage_provisioning(self):
+        """Test big space cloud storage provisioning"""
+        bot = MegaBot()
+        await bot.start()
+        
+        result = await bot.provision_cloud_storage({
+            "object_storage": True,
+            "database": True,
+            "cache": True,
+            "data_warehouse": True
+        })
+        
+        assert result["status"] == "provisioned"
+        assert len(result["storage_provisioned"]) == 4
+        
+        await bot.stop()
+    
+    def test_cloud_status(self):
+        """Test getting cloud status"""
+        bot = MegaBot()
+        
+        status = bot.get_cloud_status()
+        
+        assert "deployment" in status
+        assert "storage" in status
+        assert "tentacles" in status
+        assert "auto_scaling" in status
+
+
+class TestEnterpriseOctogent:
+    """Test Enterprise Cloud Octogent"""
+    
+    @pytest.mark.asyncio
+    async def test_enterprise_deployment(self):
+        """Test enterprise cloud deployment"""
+        bot = MegaBot()
+        await bot.start()
+        
+        result = await bot.deploy_to_enterprise_cloud({
+            "domain": "octogent.mycompany.com",
+            "regions": ["datacenter-1", "datacenter-2"]
+        })
+        
+        assert result["deployment_type"] == "enterprise"
+        assert result["status"] == "deployed"
+        assert len(result["components_deployed"]) > 0
+        assert len(result["endpoints"]) > 0
+        
+        await bot.stop()
+    
+    @pytest.mark.asyncio
+    async def test_enterprise_infrastructure_config(self):
+        """Test enterprise infrastructure configuration"""
+        bot = MegaBot()
+        await bot.start()
+        
+        result = await bot.configure_enterprise_infrastructure({
+            "networking": {
+                "vpc": "10.0.0.0/16",
+                "subnets": ["10.0.1.0/24", "10.0.2.0/24"]
+            },
+            "security": {
+                "firewall": "enabled",
+                "encryption": "AES-256"
+            }
+        })
+        
+        assert len(result["applied_settings"]) == 2
+        
+        await bot.stop()
+    
+    def test_enterprise_octogent_status(self):
+        """Test enterprise octogent status"""
+        bot = MegaBot()
+        
+        status = bot.get_enterprise_octogent_status()
+        
+        assert "octogent" in status
+        assert status["octogent"]["name"] == "🐙 Big Octogent"
+        assert "enterprise_cloud" in status
+        assert "tentacles" in status
+        assert "brain" in status
+    
+    def test_enterprise_capacity(self):
+        """Test enterprise capacity information"""
+        bot = MegaBot()
+        
+        capacity = bot.get_enterprise_capacity()
+        
+        assert "compute" in capacity
+        assert "storage" in capacity
+        assert "network" in capacity
+        assert "scaling" in capacity
+    
+    def test_enterprise_cost_estimate(self):
+        """Test enterprise cost estimation"""
+        bot = MegaBot()
+        
+        costs = bot.estimate_enterprise_costs()
+        
+        assert "monthly_costs" in costs
+        assert "total_monthly" in costs
+        assert "savings_opportunities" in costs
