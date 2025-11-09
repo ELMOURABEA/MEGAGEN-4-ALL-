@@ -122,6 +122,7 @@ async def interactive_mode():
                     continue
                 
                 if command.lower() == 'exit':
+                    await bot.stop()
                     break
                 elif command.lower() == 'help':
                     print("\nAvailable commands:")
