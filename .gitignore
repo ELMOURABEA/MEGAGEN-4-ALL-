@@ -58,3 +58,11 @@ htmlcov/
 # Temporary files
 /tmp/
 *.tmp
+
+# GitHub Action temporary files
+megabot_config.json
+release_notes.md
+
+# Package build artifacts
+*.whl
+*.tar.gz

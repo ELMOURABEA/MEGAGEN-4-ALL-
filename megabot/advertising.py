@@ -35,9 +35,9 @@ class AdvertisingCore:
         """
         self.config = config or {}
         
-        # Default AdMob IDs (can be overridden)
-        self.app_id = self.config.get("app_id", "ca-app-pub-8167320193401713~7894343051")
-        self.banner_id = self.config.get("banner_id", "ca-app-pub-8167320193401713/5228651260")
+        # AdMob IDs from configuration (should be set via environment variables)
+        self.app_id = self.config.get("app_id", "")
+        self.banner_id = self.config.get("banner_id", "")
         self.interstitial_id = self.config.get("interstitial_id", "")
         self.rewarded_id = self.config.get("rewarded_id", "")
         
