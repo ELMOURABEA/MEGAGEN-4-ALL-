@@ -7,15 +7,17 @@ import json
 from functools import wraps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import concurrent.futures
 from ..core import MegaBot
 from ..config import Config
 
-
 def async_route(f):
-    """Decorator to handle async routes in Flask"""
+    """Decorator to handle async routes in Flask using a thread pool"""
     @wraps(f)
     def wrapped(*args, **kwargs):
-        return asyncio.run(f(*args, **kwargs))
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(asyncio.run, f(*args, **kwargs))
+            return future.result()
     return wrapped
 
 
