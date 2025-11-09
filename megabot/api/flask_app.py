@@ -3,7 +3,6 @@ Flask REST API for MEGA-Bot
 Provides HTTP endpoints for integration with web applications and systems
 """
 import asyncio
-import json
 from functools import wraps
 from flask import Flask, request, jsonify
 from flask_cors import CORS
