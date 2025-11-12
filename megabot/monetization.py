@@ -10,7 +10,8 @@ class SubscriptionTier(Enum):
     """Subscription tier levels"""
     FREE = "free"
     PRO = "pro"
-    FULL_ENERGY = "full_energy"
+    ENTERPRISE = "enterprise"
+    FULL_ENERGY = "full_energy"  # Alias for enterprise
 
 
 class MonetizationManager:
@@ -44,6 +45,16 @@ class MonetizationManager:
             "auto_update": True,
             "priority_support": False,
             "early_access": False
+        },
+        SubscriptionTier.ENTERPRISE: {
+            "max_queries_per_day": -1,  # unlimited
+            "max_research_per_day": -1,  # unlimited
+            "allowed_research_depths": ["shallow", "medium", "deep"],
+            "concurrent_tasks": 20,
+            "cache_enabled": True,
+            "auto_update": True,
+            "priority_support": True,
+            "early_access": True
         },
         SubscriptionTier.FULL_ENERGY: {
             "max_queries_per_day": -1,  # unlimited
@@ -194,6 +205,17 @@ class MonetizationManager:
                     "10 concurrent tasks",
                     "Advanced caching",
                     "Auto-updates"
+                ]
+            },
+            "enterprise": {
+                "name": "Enterprise",
+                "price": "$29.99/month",
+                "features": [
+                    "Everything in Pro",
+                    "20 concurrent tasks",
+                    "Priority support",
+                    "Early access to new features",
+                    "Premium integrations"
                 ]
             },
             "full_energy": {

@@ -1,4 +1,5 @@
 {
+  "debug": false,
   "api_keys": {
     "copilot": "your-copilot-api-key",
     "gemini": "your-gemini-api-key",
@@ -20,5 +21,27 @@
     "multi_tasking": true,
     "auto_update": true,
     "document_sync": true
+  },
+  "monetization": {
+    "subscription_tier": "free",
+    "payment_methods_enabled": ["stripe", "bank_transfer", "bitcoin", "dogecoin"]
+  },
+  "advertising": {
+    "app_id": "your-admob-app-id",
+    "banner_id": "your-admob-banner-id",
+    "interstitial_id": "your-admob-interstitial-id",
+    "rewarded_id": "your-admob-rewarded-id"
+  },
+  "payments": {
+    "stripe_api_key": "your-stripe-api-key",
+    "stripe_webhook_secret": "your-stripe-webhook-secret",
+    "bitcoin_address": "your-bitcoin-wallet-address",
+    "dogecoin_address": "your-dogecoin-wallet-address",
+    "bank_account": {
+      "account_number": "XXXXXXXXXX",
+      "routing_number": "XXXXXXXXX",
+      "account_name": "MEGAGENT LLC",
+      "bank_name": "Your Bank"
+    }
   }
 }

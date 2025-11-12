@@ -1,7 +1,12 @@
 # Funding options for MEGAGENT
 
-# github: [ELMOURABEA]
-# patreon: megagent
-# open_collective: megagent
-# ko_fi: megagent
-# custom: ["https://megagent.com/donate"]
+# GitHub Sponsors
+github: [ELMOURABEA]
+
+# Ko-fi
+ko_fi: elmourabea
+
+# Custom sponsorship URLs
+custom: 
+  - "https://ko-fi.com/elmourabea?ref=onboarding_email_founderwelcome"
+  - "https://github.com/sponsors/ELMOURABEA"
