@@ -1,0 +1,215 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main/coll" ]
+  pull_request:
+    branches: [ "main/coll" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    - name: Test with pytest
+      run: |
+        pytest
+                    - name: Python3.8 PyInstaller Linux AMD64
+  # You may pin to the exact commit or the version.
+  # uses: action-python/pyinstaller-py3.8@1839eaaab51a950d6a80bf199c2527cfb045421b
+  uses: action-python/pyinstaller-py3.8@v1.0.0
+  with:
+    # Directory containing source code & .spec file (optional requirements.txt).
+    path: # default is src
+    # Specify a custom URL for PYPI
+    pypi_url: # optional, default is https://pypi.python.org/
+    # Specify a custom URL for PYPI Index
+    pypi_index_url: # optional, default is https://pypi.python.org/simple
+    # Specify a file path for .spec file
+    spec: # optional, default is 
+    # Specify a file path for requirements.txt file
+    requirements: # optional, default is requirements.txt
+    # Rename the binary file, this will only work when you have --onefile binary.
+    rename: # optional, default is 
+          
+            - name: Python3.7 PyInstaller Linux AMD64
+  # You may pin to the exact commit or the version.
+  # uses: action-python/pyinstaller-py3.7@9064b351f19ba1936de195abeb050fe3ddf7565c
+  uses: action-python/pyinstaller-py3.7@v1.0.0
+  with:
+    # Directory containing source code & .spec file (optional requirements.txt).
+    path: # default is src
+    # Specify a custom URL for PYPI
+    pypi_url: # optional, default is https://pypi.python.org/
+    # Specify a custom URL for PYPI Index
+    pypi_index_url: # optional, default is https://pypi.python.org/simple
+    # Specify a file path for .spec file
+    spec: # optional, default is 
+    # Specify a file path for requirements.txt file
+    requirements: # optional, default is requirements.txt
+    # Rename the binary file, this will only work when you have --onefile binary.
+    rename: # optional, default is 
+                      - name: Python Tox on Fedora
+  # You may pin to the exact commit or the version.
+  # uses: fedora-python/tox-github-action@807f27871410c7391018dc9a245c8cffdced15e9
+  uses: fedora-python/tox-github-action@v41.0
+  with:
+    # Tox environment to run the tests on
+    tox_env: # default is py313
+    # Space separated packages to install via dnf install (can contain options)
+    dnf_install: # optional, default is 
+    # Path to switch to before running tox.
+    workdir: # optional, default is 
+                      - name: Python Actions Collection
+  uses: microsoft/action-python@0.7.2
+  with:
+    # Project root directory.
+Default '.'
+
+    root: # optional, default is .
+    # pyproject.toml location.
+Default pyproject.toml
+
+    toml: # optional, default is pyproject.toml
+    # Python Version
+Default is '3.7'.
+
+    python_version: # optional, default is 3.7
+    # Run Black
+Default is false.
+
+    black: # optional
+    # Run Bandit
+Default is false.
+
+    bandit: # optional
+    # Run Pylint
+Default is false.
+
+    pylint: # optional
+    # Run Pyright
+Default is false.
+
+    pyright: # optional
+    # Run Flake8
+Default is false.
+
+    flake8: # optional
+    # Run tests with PyTest
+Default is false.
+
+    pytest: # optional
+    # Publish to PyPi
+Default is false
+
+    pypi_publish: # optional
+    # Customize which tests run with Pytest Markers
+
+    args: # optional, default is 
+    # PyPi Target. Use this to point to private or test locations.      
+Default testpypi
+
+    pypi_repo: # optional, default is pypi
+    # Credentials for PyPi
+
+    pypi_password: # optional, default is 
+    # Value to append to version in order to produce unique id for PyPi.
+Examples include: 
+  '-rc {{ github.run_attempt }}'
+  '-dev {{ github.run_attempt }}'
+
+    version_suffix: # optional, default is 
+    # GITHUB_TOKEN
+    github_token: # optional, default is ${{ github.token }}
+    # Working directory relative to the root directory.
+    workdir: # optional, default is src
+    # Test directory
+    testdir: # optional, default is tests
+    # Flags for code coverage
+    coverage: # optional, default is true
+    # Flags for code coverage
+    flags: # optional, default is unittests
+    # Report level for reviewdog [info,warning,error]
+    level: # optional, default is error
+    # Reporter of reviewdog command [github-pr-check,github-pr-review].
+    reporter: # optional, default is github-pr-check
+    # Filtering mode for the reviewdog command [added,diff_context,file,nofilter].
+Default is added.
+
+    filter_mode: # optional, default is added
+    # Exit code for reviewdog when errors are found [true,false]
+Default is `false`.
+            - name: GitHub Deployments
+  # You may pin to the exact commit or the version.
+  # uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8
+  uses: bobheadxi/deployments@v1.5.0
+  with:
+    # One of 'start', 'finish', 'deactivate-env', or 'delete-env'
+    step: 
+    # GitHub access token
+    token: # default is ${{ github.token }}
+    # The name of the deployment environment in GitHub to create statuses in.
+    env: 
+    # Set status for a different repository, using the format `$owner/$repository` (optional, defaults to the current repository)
+    repository: # optional
+    # URL to logs
+    logs: # optional
+    # Description to set in status
+    desc: # optional
+    # The git ref to use for the deploy, defaults to `github.ref`
+    ref: # optional
+    # The task to assign to the deployment, defaults to 'deploy'
+    task: # optional
+    # Print arguments used by this action and other debug information.
+    debug: # optional, default is false
+    # The deployment ID to update (if specified during `start`, the deployment will be updated instead of creating a new one)
+    deployment_id: # optional
+    # The environment URL (for `finish` only)
+    env_url: # optional
+    # The deployment status (for `finish` only)
+    status: # optional
+    # Whether to manually mark existing deployments of this environment as inactive (for `start` and `finish` only)
+    override: # optional
+    # Whether to mark existing deployments as inactive if a deployment succeeds (for `finish` only)
+    auto_inactive: # optional, default is false
+    # JSON-formatted dictionary with extra information about the deployment (for `start` only)
+    payload: # optional
+          
+    fail_on_error: # optional, default is false
+    # Additional reviewdog flags
+    reviewdog_flags: # optional, default is 
+                      - name: Create Artifact YAML
+  # You may pin to the exact commit or the version.
+  # uses: opencontextinc/create-artifact-yaml@218aadb9180fd982c8f2aaa592573297bdb9550e
+  uses: opencontextinc/create-artifact-yaml@v1.0.1
+  with:
+    # Type of artifact. One of sbom, container, package, or image
+    type: 
+    # URL/URI of the artifact
+    url: 
+    # Directory to save YAML files to. If not specified then the directory oc-artifact-yaml will be used.
+    directory: # optional
+          
