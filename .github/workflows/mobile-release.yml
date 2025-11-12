@@ -15,6 +15,8 @@ jobs:
   build-android:
     name: Build Android APK/AAB
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -71,6 +73,8 @@ jobs:
   build-ios:
     name: Build iOS IPA
     runs-on: macos-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -139,6 +143,8 @@ jobs:
     name: Create GitHub Release
     needs: [build-android, build-ios]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Needed to create releases
     
     steps:
       - name: Checkout code
@@ -211,6 +217,8 @@ jobs:
     needs: build-android
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
@@ -237,6 +245,8 @@ jobs:
     needs: build-ios
     runs-on: macos-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
