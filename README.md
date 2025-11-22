@@ -9,7 +9,7 @@ A unified AI agent integrating multiple cutting-edge platforms for comprehensive
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-2.0.0-brightgreen.svg)](https://github.com/ELMOURABEA/MEGAGENT/releases/tag/v2.0.0)
-[![Tests](https://img.shields.io/badge/tests-87%20passing-success.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-119%20passing-success.svg)](tests/)
 [![GitHub Action](https://img.shields.io/badge/GitHub%20Action-Ready-blue.svg)](action.yml)
 [![Marketplace](https://img.shields.io/badge/GitHub%20Marketplace-MeGAGen--4--all-orange.svg)](https://github.com/marketplace/actions/megagen-4-all)
 
@@ -764,13 +764,88 @@ Current test coverage: **87 tests** covering:
 - **☁️ Cloud deployment** (new)
 - **🏢 Enterprise Cloud Octogent** (new)
 
+## 💰 Subscription Tiers
+
+MEGAGENT offers flexible subscription plans:
+
+### Free Tier
+- 10 queries per day
+- 5 research operations per day
+- Shallow research only
+- 2 concurrent tasks
+- Basic caching
+
+### Pro Tier - $9.99/month
+- Unlimited queries
+- Unlimited research
+- All research depths (shallow, medium, deep)
+- 10 concurrent tasks
+- Advanced caching
+- Auto-updates
+
+### Enterprise Tier - $29.99/month
+- Everything in Pro
+- 20 concurrent tasks
+- Priority support
+- Early access to new features
+- Premium integrations
+
+## 💳 Payment Methods
+
+We support multiple payment options:
+- 💳 Credit/Debit Card (Stripe)
+- 🏦 Bank Transfer
+- ₿ Bitcoin
+- Ð Dogecoin
+- 💰 Stripe Wallet
+
+## 📱 Mobile Apps
+
+MEGAGENT is available on:
+- 🤖 **Google Play Store** - Coming Soon
+- 🍎 **Apple App Store** - Coming Soon
+
+For publishing guides, see:
+- [Mobile App Publishing Guide](MOBILE_APP_PUBLISHING.md)
+- [SDK Integration Guide](SDK_INTEGRATION.md)
+
+## 🚀 Deployment
+
+Ready to deploy MEGAGENT? Check out our comprehensive guides:
+- [Deployment Guide](DEPLOYMENT_GUIDE.md) - Complete production deployment
+- [Mobile App Publishing](MOBILE_APP_PUBLISHING.md) - iOS & Android publishing
+- [SDK Integration](SDK_INTEGRATION.md) - Integrate MEGAGENT into your apps
+
+## 💝 Support & Sponsorship
+
+Love MEGAGENT? Support its development!
+
+### GitHub Sponsors
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-pink.svg)](https://github.com/sponsors/ELMOURABEA)
+
+Support via GitHub Sponsors: [https://github.com/sponsors/ELMOURABEA](https://github.com/sponsors/ELMOURABEA)
+
+### Ko-fi
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-red.svg)](https://ko-fi.com/elmourabea)
+
+Buy me a coffee: [https://ko-fi.com/elmourabea](https://ko-fi.com/elmourabea?ref=onboarding_email_founderwelcome)
+
+Your support helps:
+- 🚀 Develop new features
+- 🐛 Fix bugs faster
+- 📚 Improve documentation
+- 🌟 Add more AI platform integrations
+- 🎯 Keep the free tier available
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+See our [Contributing Guide](CONTRIBUTING.md) for details.
+
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -778,10 +853,18 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - Google Gemini team
 - OpenAI team
 - X.AI Grok team
+- All our contributors and supporters
 
-## 📧 Contact
+## 📧 Contact & Support
 
-For questions and support, please open an issue on GitHub.
+- 💬 **Issues**: [GitHub Issues](https://github.com/ELMOURABEA/MEGAGEN-4-ALL-/issues)
+- 📧 **Email**: support@megagent.app
+- 💖 **Sponsor**: [Ko-fi](https://ko-fi.com/elmourabea) | [GitHub Sponsors](https://github.com/sponsors/ELMOURABEA)
+- 📚 **Documentation**: [Full Documentation](DOCUMENTATION.md)
+
+## 🔒 Security
+
+For security issues, please see [SECURITY.md](SECURITY.md)
 
 ---
 
@@ -790,5 +873,9 @@ For questions and support, please open an issue on GitHub.
 **Built with ❤️ by the MEGAGENT Team**
 
 *Integrating the power of multiple AI platforms into one unified solution*
+
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-pink.svg)](https://github.com/sponsors/ELMOURABEA)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-red.svg)](https://ko-fi.com/elmourabea)
+[![Stars](https://img.shields.io/github/stars/ELMOURABEA/MEGAGEN-4-ALL-?style=social)](https://github.com/ELMOURABEA/MEGAGEN-4-ALL-)
 
 </div>

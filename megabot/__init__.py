@@ -10,6 +10,8 @@ from .config import Config
 from .utils import setup_logging, get_logger, validate_query, validate_topic
 from .monetization import MonetizationManager, SubscriptionTier
 from .advertising import AdvertisingCore, AdPlacement
+from .payments import PaymentProcessor, PaymentMethod, PaymentStatus
+from .debug import DebugMode, get_debug, is_debug_enabled
 from .agenthq import (
     AgentHQCoordinator, 
     LangChainOrchestrator, 
@@ -26,6 +28,8 @@ __all__ = [
     "setup_logging", "get_logger", "validate_query", "validate_topic",
     "MonetizationManager", "SubscriptionTier",
     "AdvertisingCore", "AdPlacement",
+    "PaymentProcessor", "PaymentMethod", "PaymentStatus",
+    "DebugMode", "get_debug", "is_debug_enabled",
     "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator",
     "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent",
     "Octogen",
