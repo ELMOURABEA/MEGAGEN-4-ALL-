@@ -5,16 +5,19 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import AgentChat from './pages/AgentChat'
 import AgentManagement from './pages/AgentManagement'
+import OctogenDashboard from './pages/OctogenDashboard'
 import Login from './pages/auth/Login'
 import SignUp from './pages/auth/SignUp'
 import './styles/App.css'
 
 function AuthenticatedApp() {
-  const [currentPage, setCurrentPage] = useState('dashboard')
+  const [currentPage, setCurrentPage] = useState('octogen')
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const renderPage = () => {
     switch (currentPage) {
+      case 'octogen':
+        return <OctogenDashboard />
       case 'dashboard':
         return <Dashboard />
       case 'chat':
@@ -22,7 +25,7 @@ function AuthenticatedApp() {
       case 'agents':
         return <AgentManagement />
       default:
-        return <Dashboard />
+        return <OctogenDashboard />
     }
   }
 

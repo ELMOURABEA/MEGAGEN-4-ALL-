@@ -4,6 +4,11 @@ import './Sidebar.css'
 function Sidebar({ currentPage, setCurrentPage, isOpen }) {
   const menuItems = [
     {
+      id: 'octogen',
+      label: 'OCTOGEN',
+      icon: <span style={{ fontSize: '20px' }}>🐙</span>,
+    },
+    {
       id: 'dashboard',
       label: 'Dashboard',
       icon: (
