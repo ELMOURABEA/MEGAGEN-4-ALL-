@@ -21,6 +21,14 @@
   margin-bottom: 2rem;
 }
 
+.auth-logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 1.5rem;
+  display: block;
+  object-fit: contain;
+}
+
 .auth-header h2 {
   margin-bottom: 0.5rem;
   font-size: 2rem;

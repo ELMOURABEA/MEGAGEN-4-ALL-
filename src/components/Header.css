@@ -39,6 +39,12 @@
   background-color: var(--surface);
 }
 
+.header-logo {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
 .header-title {
   font-size: 1.5rem;
   font-weight: 700;

@@ -26,7 +26,12 @@ function Header({ onMenuClick }) {
               <line x1="3" y1="18" x2="21" y2="18" />
             </svg>
           </button>
-          <h1 className="header-title">MEGAGENT</h1>
+          <img
+            src="/Gemini_Generated_Image_z1528wz1528wz152.png"
+            alt="MeGaOcToOoN Logo"
+            className="header-logo"
+          />
+          <h1 className="header-title">MeGaOcToOoN</h1>
         </div>
         <div className="header-right">
           <button className="header-button">

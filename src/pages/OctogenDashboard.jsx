@@ -49,7 +49,7 @@ function OctogenDashboard() {
   }
 
   if (loading) {
-    return <div className="octogen-loading">Loading OCTOGEN System...</div>
+    return <div className="octogen-loading">Loading MeGaOcToOoN System...</div>
   }
 
   const tierInfo = getTierInfo(subscription?.tier || 'free')
@@ -58,8 +58,8 @@ function OctogenDashboard() {
     <div className="octogen-dashboard">
       <div className="octogen-header">
         <div className="octogen-title-section">
-          <h1 className="octogen-title">OCTOGEN</h1>
-          <p className="octogen-subtitle">10-in-1 SuperAgent Intelligence System</p>
+          <h1 className="octogen-title">MeGaOcToOoN</h1>
+          <p className="octogen-subtitle">Unleash Octopodal Intelligence - AI-Agent x10</p>
         </div>
         <div className="tier-badge" style={{ borderColor: tierInfo.color }}>
           <div className="tier-dot" style={{ backgroundColor: tierInfo.color }}></div>

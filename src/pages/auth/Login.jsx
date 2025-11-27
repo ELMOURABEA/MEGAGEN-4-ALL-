@@ -27,8 +27,13 @@ function Login({ onToggle }) {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
+          <img
+            src="/Gemini_Generated_Image_mgf3u2mgf3u2mgf3.png"
+            alt="MeGaOcToOoN Logo"
+            className="auth-logo"
+          />
           <h2>Welcome Back</h2>
-          <p>Sign in to your MEGAGENT account</p>
+          <p>Sign in to your MeGaOcToOoN account</p>
         </div>
 
         {error && (

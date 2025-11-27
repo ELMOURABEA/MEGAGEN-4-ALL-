@@ -45,8 +45,13 @@ function SignUp({ onToggle }) {
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
+            <img
+              src="/Gemini_Generated_Image_mgf3u2mgf3u2mgf3.png"
+              alt="MeGaOcToOoN Logo"
+              className="auth-logo"
+            />
             <h2>Account Created!</h2>
-            <p>Your MEGAGENT account has been successfully created.</p>
+            <p>Your MeGaOcToOoN account has been successfully created.</p>
           </div>
           <button onClick={onToggle} className="auth-button">
             Go to Sign In
@@ -60,8 +65,13 @@ function SignUp({ onToggle }) {
     <div className="auth-container">
       <div className="auth-card">
         <div className="auth-header">
+          <img
+            src="/Gemini_Generated_Image_mgf3u2mgf3u2mgf3.png"
+            alt="MeGaOcToOoN Logo"
+            className="auth-logo"
+          />
           <h2>Create Account</h2>
-          <p>Join MEGAGENT and start using AI agents</p>
+          <p>Join MeGaOcToOoN and unleash x10 AI intelligence</p>
         </div>
 
         {error && (

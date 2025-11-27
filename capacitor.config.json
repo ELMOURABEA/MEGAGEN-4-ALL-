@@ -1,12 +1,12 @@
 {
-  "appId": "com.megagent.app",
-  "appName": "MEGAGENT",
+  "appId": "com.megaoctoon.app",
+  "appName": "MeGaOcToOoN",
   "webDir": "dist",
   "bundledWebRuntime": false,
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 2000,
-      "backgroundColor": "#2563eb",
+      "backgroundColor": "#1e293b",
       "showSpinner": false
     }
   },
