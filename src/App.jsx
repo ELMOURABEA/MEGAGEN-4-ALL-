@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
 import Header from './components/Header'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import AgentChat from './pages/AgentChat'
 import AgentManagement from './pages/AgentManagement'
+import Login from './pages/auth/Login'
+import SignUp from './pages/auth/SignUp'
 import './styles/App.css'
 
-function App() {
+function AuthenticatedApp() {
   const [currentPage, setCurrentPage] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
 
@@ -25,9 +28,7 @@ function App() {
 
   return (
     <div className="app">
-      <Header
-        onMenuClick={() => setSidebarOpen(!sidebarOpen)}
-      />
+      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div className="app-container">
         <Sidebar
           currentPage={currentPage}
@@ -39,6 +40,44 @@ function App() {
         </main>
       </div>
     </div>
+  )
+}
+
+function AppContent() {
+  const { user, loading } = useAuth()
+  const [showLogin, setShowLogin] = useState(true)
+
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        fontSize: '1.25rem',
+        color: 'var(--text-secondary)',
+      }}>
+        Loading...
+      </div>
+    )
+  }
+
+  if (!user) {
+    return showLogin ? (
+      <Login onToggle={() => setShowLogin(false)} />
+    ) : (
+      <SignUp onToggle={() => setShowLogin(true)} />
+    )
+  }
+
+  return <AuthenticatedApp />
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }
 
