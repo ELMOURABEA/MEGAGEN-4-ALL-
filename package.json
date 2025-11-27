@@ -1,6 +1,7 @@
 {
   "name": "megaoctoon",
   "version": "1.0.0",
+  "type": "module",
   "description": "MeGaOcToOoN - Unleash Octopodal Intelligence with AI-Agent x10",
   "main": "index.js",
   "directories": {
