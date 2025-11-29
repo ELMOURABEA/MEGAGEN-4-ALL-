@@ -942,10 +942,11 @@ For security issues, please see [SECURITY.md](SECURITY.md)
 
 <div align="center">
 
-**Built with ❤️ by the MEGAGENT Team**
+**Built with ❤️ by the MeGaOcToOoN Team & CREATED BY Dr-Ai (MeGaOcto@elmorab3.com)**
 
-*Integrating the power of multiple AI platforms into one unified solution*
-
+*Integrating the power of multiple AI platforms into one unified solution* 
+*Innovtion for the futur*
+*Designed with love for the whole world* *OMAR&SELA*
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-pink.svg)](https://github.com/sponsors/ELMOURABEA)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-red.svg)](https://ko-fi.com/elmourabea)
 [![Stars](https://img.shields.io/github/stars/ELMOURABEA/MEGAGEN-4-ALL-?style=social)](https://github.com/ELMOURABEA/MEGAGEN-4-ALL-)
