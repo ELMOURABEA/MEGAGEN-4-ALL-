@@ -2,7 +2,6 @@
 API Client for MEGA-Bot
 Provides easy integration with MEGA-Bot API server from Python applications
 """
-import json
 from typing import Dict, Any, Optional, List
 try:
     import requests
