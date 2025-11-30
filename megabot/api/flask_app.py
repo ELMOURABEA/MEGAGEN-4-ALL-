@@ -205,7 +205,6 @@ def main():
     
     # Parse command line arguments
     port = 5000
-    debug = False
     
     if '--port' in sys.argv:
         try:
@@ -213,9 +212,6 @@ def main():
         except (IndexError, ValueError):
             print("Invalid port number")
             sys.exit(1)
-    
-    if '--debug' in sys.argv:
-        debug = True
     
     # Create and run app
     app = create_app()
@@ -238,8 +234,8 @@ def main():
     print("=" * 80)
     
     # Note: For production, use a proper WSGI server like gunicorn or waitress
-    # Debug mode is disabled by default for security
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    # Debug mode is disabled for security
+    app.run(host='0.0.0.0', port=port, debug=False)
 
 
 if __name__ == '__main__':
