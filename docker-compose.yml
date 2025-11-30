@@ -36,7 +36,7 @@ services:
       - DATABASE_PATH=/data/megabot.db
       - WEB_PORT=8080
     restart: unless-stopped
-    command: ["python", "-m", "megabot.web.server"]
+    command: ["python", "-m", "megabot.server"]
     depends_on:
       - megabot-api
 
