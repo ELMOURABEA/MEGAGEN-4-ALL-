@@ -68,6 +68,29 @@ python examples/workflow_automation.py
 
 ---
 
+### 4. Validation Example (`validation_example.py`) [NEW in v1.1.0]
+
+Demonstrates input validation and security features:
+- Query validation and sanitization
+- Topic validation
+- Automatic input security checks
+- Logging configuration
+- Error handling examples
+
+**Run:**
+```bash
+python examples/validation_example.py
+```
+
+**What it shows:**
+- Input validation for queries and topics
+- Automatic sanitization of dangerous content
+- Logging system configuration
+- Security best practices
+- Error message handling
+
+---
+
 ## Running Examples
 
 ### Prerequisites
@@ -92,6 +115,7 @@ Note: Examples work without API keys in demo mode with simulated responses.
 python examples/basic_usage.py
 python examples/advanced_research.py
 python examples/workflow_automation.py
+python examples/validation_example.py  # New in v1.1.0
 ```
 
 ### Expected Output

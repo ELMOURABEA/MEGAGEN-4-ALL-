@@ -32,15 +32,18 @@ async def advanced_research():
         print(f"\nResearching: {topic}")
         result = await bot.research(topic, depth="deep")
         
-        print(f"  Platforms: {', '.join(result['platforms_used'])}")
-        print(f"  Findings: {result['synthesis'].get('total_findings', 0)}")
-        print(f"  Sources: {len(result['aggregated_sources'])}")
-        
-        # Show key insights
-        if 'key_insights' in result['synthesis']:
-            print("  Key insights:")
-            for insight in result['synthesis']['key_insights'][:2]:
-                print(f"    - [{insight['platform']}] {insight['insight'][:60]}...")
+        if 'error' in result:
+            print(f"  Error: {result['error']}")
+        else:
+            print(f"  Platforms: {', '.join(result['platforms_used'])}")
+            print(f"  Findings: {result['synthesis'].get('total_findings', 0)}")
+            print(f"  Sources: {len(result.get('aggregated_sources', []))}")
+            
+            # Show key insights
+            if 'key_insights' in result['synthesis']:
+                print("  Key insights:")
+                for insight in result['synthesis']['key_insights'][:2]:
+                    print(f"    - [{insight['platform']}] {insight['insight'][:60]}...")
     
     # Comprehensive workflow
     print("\n" + "=" * 80)

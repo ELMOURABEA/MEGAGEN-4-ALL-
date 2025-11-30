@@ -35,9 +35,12 @@ async def basic_example():
     print("\n2. Research Example")
     print("-" * 80)
     research = await bot.research("neural networks", depth="medium")
-    print(f"Research topic: {research['topic']}")
-    print(f"Platforms used: {len(research['platforms_used'])}")
-    print(f"Total findings: {research['synthesis'].get('total_findings', 0)}")
+    if 'error' in research:
+        print(f"Research error: {research['error']}")
+    else:
+        print(f"Research topic: {research['topic']}")
+        print(f"Platforms used: {len(research['platforms_used'])}")
+        print(f"Total findings: {research['synthesis'].get('total_findings', 0)}")
     
     # Example 3: Get status
     print("\n3. Bot Status")

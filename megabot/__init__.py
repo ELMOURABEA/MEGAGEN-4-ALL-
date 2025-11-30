@@ -2,10 +2,36 @@
 MEGA-Bot - A unified AI agent integrating multiple platforms
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "MEGAGENT Team"
 
 from .core import MegaBot
 from .config import Config
+from .utils import setup_logging, get_logger, validate_query, validate_topic
+from .monetization import MonetizationManager, SubscriptionTier
+from .advertising import AdvertisingCore, AdPlacement
+from .payments import PaymentProcessor, PaymentMethod, PaymentStatus
+from .debug import DebugMode, get_debug, is_debug_enabled
+from .agenthq import (
+    AgentHQCoordinator, 
+    LangChainOrchestrator, 
+    LangGraphOrchestrator,
+    OctopusBrain,
+    CloudOctopus,
+    EnterpriseCloudOctogent
+)
+from .octogen import Octogen
+from .oauth import GitHubOAuth, CrossPlatformOAuth
 
-__all__ = ["MegaBot", "Config"]
+__all__ = [
+    "MegaBot", "Config", 
+    "setup_logging", "get_logger", "validate_query", "validate_topic",
+    "MonetizationManager", "SubscriptionTier",
+    "AdvertisingCore", "AdPlacement",
+    "PaymentProcessor", "PaymentMethod", "PaymentStatus",
+    "DebugMode", "get_debug", "is_debug_enabled",
+    "AgentHQCoordinator", "LangChainOrchestrator", "LangGraphOrchestrator",
+    "OctopusBrain", "CloudOctopus", "EnterpriseCloudOctogent",
+    "Octogen",
+    "GitHubOAuth", "CrossPlatformOAuth"
+]

@@ -36,6 +36,8 @@ venv.bak/
 
 # Environment variables
 .env
+.env.production
+.env.local
 config.json
 
 # Database
@@ -45,6 +47,14 @@ config.json
 
 # Logs
 *.log
+debug_logs/
+
+# Security - Never commit these!
+*.keystore
+*.p12
+*.mobileprovision
+*.cer
+*.certSigningRequest
 
 # OS
 .DS_Store
@@ -58,3 +68,11 @@ htmlcov/
 # Temporary files
 /tmp/
 *.tmp
+
+# GitHub Action temporary files
+megabot_config.json
+release_notes.md
+
+# Package build artifacts
+*.whl
+*.tar.gz
