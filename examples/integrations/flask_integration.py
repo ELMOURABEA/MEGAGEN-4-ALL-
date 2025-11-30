@@ -116,7 +116,13 @@ def status():
 
 @app.route('/api/query', methods=['POST'])
 def query():
-    """Process query"""
+    """
+    Process query
+    
+    Note: This example uses asyncio.run() which creates a new event loop for each call.
+    For production use with concurrent requests, consider using the async_route decorator
+    pattern from megabot.api.flask_app or an async-native framework like Quart.
+    """
     global bot_started
     
     # Start bot if not started

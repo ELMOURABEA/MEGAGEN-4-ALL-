@@ -239,7 +239,7 @@ def main():
     
     # Note: For production, use a proper WSGI server like gunicorn or waitress
     # Debug mode is disabled by default for security
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=debug)
 
 
 if __name__ == '__main__':
