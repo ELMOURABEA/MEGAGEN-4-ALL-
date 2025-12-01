@@ -945,7 +945,7 @@ For security issues, please see [SECURITY.md](SECURITY.md)
 **Built with ❤️ by the MeGaOcToOoN Team & CREATED BY Dr-Ai (MeGaOcto@elmorab3.com)**
 
 *Integrating the power of multiple AI platforms into one unified solution* 
-*Innovtion for the futur*
+*Innovation for the future*
 *Designed with love for the whole world* *OMAR&SELA*
 [![GitHub Sponsors](https://img.shields.io/badge/GitHub-Sponsors-pink.svg)](https://github.com/sponsors/ELMOURABEA)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-red.svg)](https://ko-fi.com/elmourabea)
