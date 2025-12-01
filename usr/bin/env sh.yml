@@ -1,0 +1,1171 @@
+#set-e
+# Creates project files for MeGaOcToOoN GitHub App infra.
+# Usage:
+#   sh create_files.sh
+# Then:
+#   git add .
+#   git commit -m "chore: add app infra, agent, docs, CI and setup server"
+#   git push origin main
+#   git tag -a v10.0 -m "Release v10.0"
+#   git push origin v10.0
+
+echo "Creating files..."
+
+# Top-level files
+cat > package.json <<'EOF'
+{
+  "name": "github-app-sample",
+  "version": "1.0.0",
+  "description": "Minimal example: authenticate as a GitHub App, call GET /app, list installations and create installation tokens",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "octokit": "^2.0.0",
+    "@octokit/auth-app": "^4.0.0"
+  }
+}
+EOF
+
+cat > index.js <<'EOF'
+import 'dotenv/config';
+import { Octokit } from "octokit";
+import { createAppAuth } from "@octokit/auth-app";
+
+function normalizePrivateKey(raw) {
+  if (!raw) return raw;
+  if (raw.includes('\\n')) {
+    return raw.replace(/\\n/g, '\n');
+  }
+  return raw;
+}
+
+async function run() {
+  const { APP_ID, PRIVATE_KEY, INSTALLATION_ID } = process.env;
+
+  if (!APP_ID || !PRIVATE_KEY) {
+    console.error("ERROR: APP_ID and PRIVATE_KEY must be set (see .env.example)");
+    process.exit(1);
+  }
+
+  const privateKey = normalizePrivateKey(PRIVATE_KEY);
+
+  const octokit = new Octokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: APP_ID,
+      privateKey,
+    },
+  });
+
+  try {
+    console.log("=== GET /app (App metadata) ===");
+    const { data: app } = await octokit.request("GET /app", {
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      }
+    });
+    console.log(JSON.stringify(app, null, 2));
+
+    console.log("\n=== GET /app/installations (Installations for this App) ===");
+    const { data: installations } = await octokit.request("GET /app/installations");
+    if (!installations || installations.length === 0) {
+      console.log("No installations found for this app.");
+    } else {
+      console.log("Found installations:");
+      installations.forEach(inst => {
+        console.log(`- id: ${inst.id}, account: ${inst.account?.login}, app_slug: ${inst.app_slug}`);
+      });
+    }
+
+    const installationId = INSTALLATION_ID || (installations && installations[0] && installations[0].id);
+    if (!installationId) {
+      console.log("\nNo installation id provided and none found automatically. Set INSTALLATION_ID in .env or choose one from the installations list above.");
+      return;
+    }
+
+    console.log(`\n=== Creating installation access token for installation ${installationId} ===`);
+
+    const { data: tokenData } = await octokit.request(
+      "POST /app/installations/{installation_id}/access_tokens",
+      { installation_id: installationId }
+    );
+    console.log("Installation token created. Expires at:", tokenData.expires_at);
+
+    const installationOctokit = new Octokit({ auth: tokenData.token });
+    const repos = await installationOctokit.request("GET /installation/repositories");
+    console.log("\nRepositories visible to this installation:");
+    repos.data.repositories.forEach(r => {
+      console.log(`- ${r.full_name}`);
+    });
+
+  } catch (err) {
+    console.error("Error:", err.message || err);
+    if (err.status) console.error("HTTP status:", err.status);
+    if (err.response && err.response.data) {
+      console.error("Response data:", JSON.stringify(err.response.data, null, 2));
+    }
+    process.exit(1);
+  }
+}
+
+run();
+EOF
+
+cat > .env.example <<'EOF'
+# Copy this file to .env and fill values.
+# APP_ID: the numeric App ID shown on your GitHub App settings page (e.g. 12345)
+# PRIVATE_KEY: the full PEM private key you download from GitHub when creating the App.
+#   If you paste it into an environment variable, make sure it contains the newlines.
+# INSTALLATION_ID: optional - if provided the script will create an installation token for this id.
+
+APP_ID=12345
+
+# Option A (recommended): put the PEM exactly as downloaded (multi-line).
+# Option B: single-line with literal \n sequences (the script converts them):
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nREPLACE_WITH_YOUR_KEY\n-----END RSA PRIVATE KEY-----"
+
+INSTALLATION_ID=
+EOF
+
+cat > README.md <<'EOF'
+# GitHub App example (Node.js + Octokit)
+
+This small example authenticates as a GitHub App (using the app's private key), calls `GET /app` to fetch app metadata, lists installations, and can create an installation access token to act as that installation.
+
+Quick start
+1. Copy `.env.example` to `.env` and fill APP_ID and PRIVATE_KEY (and optionally INSTALLATION_ID).
+2. npm install
+3. npm start
+
+Security tips
+- Keep the private key secret. Do NOT commit `.env` to source control.
+- Prefer storing the private key in a secrets manager or environment variables injected at runtime.
+EOF
+
+cat > SECURITY.md <<'EOF'
+# Security Policy
+
+Thank you for responsibly reporting security issues in MeGaOcToOoN.
+
+Reporting
+- Email: security@elmorab3.com (replace with your contact email)
+- Please include: steps to reproduce, impact, reproduction code or logs, and suggested mitigation.
+
+Response
+- We will acknowledge reports within 72 hours.
+- We aim to provide a remediation timeline depending on severity.
+
+Public disclosure
+- Please coordinate with us before public disclosure to allow us to address issues.
+
+Notes
+- Do NOT send private keys or credentials in any report.
+- For urgent incidents, contact: security@elmorab3.com
+EOF
+
+cat > INSTALL.md <<'EOF'
+# Installing MeGaOcToOoN (quick start)
+
+One-click install link:
+- https://github.com/apps/MeGaOcToOoN/installations/new
+  - Replace `MeGaOcToOoN` with your app slug if different.
+
+Recommended public install flow:
+1. User clicks the install link and chooses an account/repositories.
+2. GitHub redirects to your Setup URL configured in the GitHub App settings with `installation_id` in the query string.
+3. Your server (the setup endpoint) calls GitHub to exchange `installation_id` for an installation access token and completes onboarding (webhook registration, default settings, etc.).
+
+Local dev & testing:
+1. Copy `server/.env.example` to `server/.env` and set:
+   - APP_ID: your numeric GitHub App ID
+   - PRIVATE_KEY: your PEM private key (do NOT commit)
+   - SETUP_ORIGIN: your public domain (https://elmorab3.com)
+2. In `server/` run:
+   - npm install
+   - npm start
+3. For local testing of the installation callback, you can use ngrok to expose your local server and set the App Setup URL to the ngrok URL.
+
+Security notes:
+- Never commit PRIVATE_KEY to the repository.
+- Use GitHub Secrets (APP_ID, PRIVATE_KEY, INSTALLATION_ID) in Actions or a secure secrets manager in production.
+EOF
+
+cat > MARKETPLACE.md <<'EOF'
+# Marketplace Listing Draft — MeGaOcToOoN
+
+Name: MeGaOcToOoN
+
+Short description:
+A lightweight GitHub App that [briefly describe main functionality — metrics, automation, PR helpers, etc.].
+
+Long description:
+MeGaOcToOoN helps teams automate [task], integrate with [service], and enforce [policy]. It is built with minimal permissions and focuses on privacy and ease-of-install.
+
+Permissions requested:
+- Repositories: Read-only (list repos, metadata)
+- Issues: Read & Write (only if creating or updating issues)
+- Pull requests: Read-only (unless optional features require write)
+- Webhooks: push, pull_request, installation (to respond to installs and events)
+
+Installation/Onboarding:
+- One-click install via GitHub.
+- Post-install setup URL will automatically complete onboarding: create any required config, register webhooks, and show a success screen.
+
+Support & privacy:
+- Support: support@elmorab3.com
+- Privacy Policy: https://elmorab3.com/privacy
+- Terms: https://elmorab3.com/terms
+
+Assets:
+- Logo: 128x128 PNG
+- Screenshots: 3 images (install, config, dashboard)
+- Category: Developer tools / Automation
+
+Notes for review:
+- App requests minimal permissions by default. Any escalated permissions are requested only at explicit consent steps.
+- Include a short explainer video and a troubleshooting guide in the listing.
+EOF
+
+mkdir -p .github/workflows
+
+cat > .github/workflows/ci.yml <<'EOF'
+name: CI / Build / Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+        run: npm test
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run deployment script (example)
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }} # optional
+        run: node server/index.js
+EOF
+
+cat > .github/workflows/release.yml <<'EOF'
+name: Create GitHub Release on tag
+
+on:
+  push:
+    tags:
+      - 'v*'    # any tag starting with v, e.g. v10.0
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+EOF
+
+cat > AGENT.md <<'EOF'
+name: MeGaOcToOoN Agent
+description: A lightweight companion service for the MeGaOcToOoN GitHub App that handles post-install onboarding, installation token exchange, webhook processing, and optional automation tasks. Designed to be run as a small Express server or serverless function and to be deployed with secrets stored in your host's secret manager.
+
+---
+
+# My Agent
+
+This document describes what the MeGaOcToOoN Agent does, how it should be configured, and what to include when committing it to the repository.
+
+## Purpose
+The MeGaOcToOoN Agent performs the server-side actions required after a user installs the MeGaOcToOoN GitHub App. Its primary responsibilities are:
+- Accept the GitHub App setup redirect and exchange the installation_id for a short-lived installation access token.
+- Run onboarding automation (create repo config files, register webhooks, seed data).
+- Provide a webhook endpoint to receive and process GitHub events (installation, push, pull_request, etc.).
+- Provide a healthcheck and basic status page for monitoring.
+
+## Responsibilities / capabilities
+- GET /setup
+  - Receives `installation_id` from GitHub after the user installs the app.
+  - Uses the App JWT (created with APP_ID + PRIVATE_KEY) to request an installation token from GitHub.
+  - Performs onboarding tasks using the installation token and shows a success page.
+- POST /webhook
+  - Receives events from GitHub.
+  - Validates signature using a webhook secret.
+  - Routes events to handlers for processing (e.g., create issue, label PR).
+- Optional admin endpoints (protected by auth) to list active installations and revoke tokens.
+
+## Run & configure
+Environment variables (never commit real values):
+- APP_ID — numeric GitHub App ID
+- PRIVATE_KEY — PEM for the GitHub App (store in secrets, not repo)
+- WEBHOOK_SECRET — secret to validate webhook payloads
+- SETUP_ORIGIN — public origin for redirects (e.g. https://elmorab3.com)
+- ADMIN_EMAIL — optional admin contact
+
+Example local start:
+1. Copy `server/.env.example` → `server/.env` and fill values (do NOT commit).
+2. npm install
+3. npm start
+
+CI / deployment:
+- Store secrets in GitHub Actions secrets or your host provider (Render, Fly, Vercel).
+- Use the `.github/workflows/ci.yml` and `release.yml` to run tests and publish releases.
+- Ensure PRIVATE_KEY is only available to runtime and CI via secrets.
+
+## Commit & PR guidance (what to add to the repo)
+When adding or updating the agent code, use a clear commit message and request a reviewer. Example:
+- Commit message: chore(agent): add setup server and agent metadata
+- PR title: feat(agent): add setup server and onboarding flow
+- Request reviewer: @ELMOURABEA
+
+If you want to indicate collaborative authorship for automation, you may add a co-author trailer in commits:
+- Co-authored-by: GitHub Copilot <copilot@github.com>
+
+## Security considerations
+- NEVER commit PRIVATE_KEY or other secrets to the repo.
+- Validate webhooks using X-Hub-Signature-256 and the webhook secret.
+- Restrict app permissions to the minimum required (principle of least privilege).
+- Rotate private key periodically and publish a revocation/rotation plan.
+- Enable branch protection and require PR reviews for main.
+
+## Release & distribution
+- Tag releases with semantic tags (we're preparing v10.0).
+- Publish release notes (RELEASE_NOTES.md) and attach build artifacts if applicable.
+- For Marketplace: provide clear permission rationale, privacy policy URL, support contact, screenshots, and an install flow.
+
+## Review checklist for PRs touching the agent
+- [ ] No private keys or secrets are included
+- [ ] .env.example present and complete
+- [ ] README / INSTALL.md updated with setup URL and domain
+- [ ] Tests added or smoke checks for endpoints
+- [ ] CI workflow references secrets via \${{ secrets.* }} and does not print them
+- [ ] Webhook signature validation implemented
+- [ ] Code scanning (CodeQL) passes or is configured
+
+---
+
+Thanks — special thanks to @ELMOURABEA for the opportunity to help finish this project.
+
+Co-authored-by: GitHub Copilot <copilot@github.com>
+EOF
+
+cat > RELEASE_NOTES.md <<'EOF'
+# Release v10.0 — Release notes template
+
+Summary
+- Short summary of the release and the high-level features/fixes.
+
+New
+- List major new features introduced in v10.0.
+
+Fixed
+- List important bug fixes.
+
+Breaking changes
+- Document any breaking changes, migration notes, or configuration changes.
+
+Upgrade notes
+- Steps for users to upgrade and any post-upgrade actions (e.g., reconfigure webhook, rotate keys).
+
+Security
+- Note any security fixes and guidance (rotate secrets if needed).
+
+Assets
+- Attach links to docs, changelog, screenshots, and any relevant migration scripts.
+
+Support
+- Contact: support@elmorab3.com
+EOF
+
+# server/ files
+mkdir -p server
+
+cat > server/package.json <<'EOF'
+{
+  "name": "megaoctooon-setup-server",
+  "version": "1.0.0",
+  "description": "Setup server for MeGaOcToOoN GitHub App - handles installation callbacks and creates installation tokens",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "octokit": "^2.0.0",
+    "@octokit/auth-app": "^4.0.0"
+  }
+}
+EOF
+
+cat > server/.env.example <<'EOF'
+# Copy to server/.env and fill in values (DO NOT commit .env)
+
+APP_ID=12345
+# PRIVATE_KEY: either paste multi-line PEM or single-line with \n sequences (script supports both)
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nREPLACE_WITH_KEY\n-----END RSA PRIVATE KEY-----"
+
+# Public origin where your app runs, used for redirects (e.g. https://elmorab3.com)
+SETUP_ORIGIN=https://elmorab3.com
+
+# Optional: a dashboard admin email
+ADMIN_EMAIL=admin@elmorab3.com
+EOF
+
+cat > server/index.js <<'EOF'
+import express from "express";
+import 'dotenv/config';
+import { Octokit } from "octokit";
+import { createAppAuth } from "@octokit/auth-app";
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+function normalizePrivateKey(raw) {
+  if (!raw) return raw;
+  if (raw.includes("\\n")) return raw.replace(/\\n/g, "\n");
+  return raw;
+}
+
+const APP_ID = process.env.APP_ID;
+const PRIVATE_KEY = normalizePrivateKey(process.env.PRIVATE_KEY);
+
+if (!APP_ID || !PRIVATE_KEY) {
+  console.warn("Warning: APP_ID and PRIVATE_KEY should be set in environment for production use.");
+}
+
+// Simple healthcheck
+app.get("/", (req, res) => res.send("MeGaOcToOoN setup server is running."));
+
+// Setup endpoint — configured as "Setup URL" in GitHub App settings.
+// GitHub will redirect here after installation with ?installation_id=XXX
+app.get("/setup", async (req, res) => {
+  const installationId = req.query.installation_id;
+  if (!installationId) {
+    return res.status(400).send("installation_id is required in the query string.");
+  }
+
+  try {
+    // Octokit authenticated as the App (JWT) to create installation tokens
+    const appOctokit = new Octokit({
+      authStrategy: createAppAuth,
+      auth: {
+        appId: APP_ID,
+        privateKey: PRIVATE_KEY,
+      },
+    });
+
+    // Create an installation token for the installation_id
+    const { data: tokenData } = await appOctokit.request(
+      "POST /app/installations/{installation_id}/access_tokens",
+      { installation_id: installationId }
+    );
+
+    // tokenData.token is the short-lived installation token — keep secret
+    // Use it to perform any onboarding steps (create config file in repository, register webhooks, etc.)
+    // Example: list repositories accessible by installation:
+    const installationOctokit = new Octokit({ auth: tokenData.token });
+    const repos = await installationOctokit.request("GET /installation/repositories");
+
+    // Do any onboarding automation here (only as needed)
+    // For demo, we return a success page listing accessible repos.
+    res.send(`
+      <h1>MeGaOcToOoN installed successfully</h1>
+      <p>Installation id: ${installationId}</p>
+      <p>Token expires at: ${tokenData.expires_at}</p>
+      <h2>Accessible repositories:</h2>
+      <ul>
+        ${repos.data.repositories.map(r => `<li>${r.full_name}</li>`).join('')}
+      </ul>
+      <p>Close this page and go back to the app.</p>
+    `);
+
+  } catch (err) {
+    console.error("Error during setup:", err);
+    res.status(500).send("Setup failed. Check server logs.");
+  }
+});
+
+// POST webhook endpoint (optional)
+app.post("/webhook", (req, res) => {
+  // Validate X-Hub-Signature-256 using webhook secret in production
+  // Process events as needed (installation, push, pull_request, etc.)
+  res.status(200).send("ok");
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Setup server listening on port ${port}`);
+});
+EOF
+
+echo "All files created."
+echo
+cat <<'INSTR'
+Next steps (copy/paste):
+
+1) Initialize git (if not already) and ensure you're on main:
+   git init            # only if this is a new folder
+   git checkout -b main || true
+   git add .
+   git commit -m "chore: add app infra, agent, docs, CI and setup server"
+
+2) Push to the remote (ensure origin is set):
+   # If origin not set: git remote add origin git@github.com:ELMOURABEA/MeGaOcto.git
+   git push -u origin main
+
+3) Create and push release tag v10.0:
+   git tag -a v10.0 -m "Release v10.0"
+   git push origin v10.0
+
+4) Add repository secrets in GitHub Settings → Secrets → Actions:
+   - APP_ID
+   - PRIVATE_KEY (PEM; multiline or use \n sequences)
+   - WEBHOOK_SECRET
+   - INSTALLATION_ID (optional)
+
+5) Deploy server to your host (Render / Fly / Vercel) and set custom domains:
+   - Add elmorab3.com and www.elmorab3.com, enable TLS.
+   - In GitHub App settings set Setup URL: https://elmorab3.com/setup and Webhook URL: https://elmorab3.com/webhook
+
+When you've pushed the code and pushed the v10.0 tag, reply:
+   "I pushed — please review"
+
+I will then perform the review and provide next steps and final checks.
+INSTR
+
+echo
+echo "Script complete."#!/usr/bin/env sh
+set -e
+
+# Creates project files for MeGaOcToOoN GitHub App infra.
+# Usage:
+#   sh create_files.sh
+# Then:
+#   git add .
+#   git commit -m "chore: add app infra, agent, docs, CI and setup server"
+#   git push origin main
+#   git tag -a v10.0 -m "Release v10.0"
+#   git push origin v10.0
+
+echo "Creating files..."
+
+# Top-level files
+cat > package.json <<'EOF'
+{
+  "name": "github-app-sample",
+  "version": "1.0.0",
+  "description": "Minimal example: authenticate as a GitHub App, call GET /app, list installations and create installation tokens",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "octokit": "^2.0.0",
+    "@octokit/auth-app": "^4.0.0"
+  }
+}
+EOF
+
+cat > index.js <<'EOF'
+import 'dotenv/config';
+import { Octokit } from "octokit";
+import { createAppAuth } from "@octokit/auth-app";
+
+function normalizePrivateKey(raw) {
+  if (!raw) return raw;
+  if (raw.includes('\\n')) {
+    return raw.replace(/\\n/g, '\n');
+  }
+  return raw;
+}
+
+async function run() {
+  const { APP_ID, PRIVATE_KEY, INSTALLATION_ID } = process.env;
+
+  if (!APP_ID || !PRIVATE_KEY) {
+    console.error("ERROR: APP_ID and PRIVATE_KEY must be set (see .env.example)");
+    process.exit(1);
+  }
+
+  const privateKey = normalizePrivateKey(PRIVATE_KEY);
+
+  const octokit = new Octokit({
+    authStrategy: createAppAuth,
+    auth: {
+      appId: APP_ID,
+      privateKey,
+    },
+  });
+
+  try {
+    console.log("=== GET /app (App metadata) ===");
+    const { data: app } = await octokit.request("GET /app", {
+      headers: {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28"
+      }
+    });
+    console.log(JSON.stringify(app, null, 2));
+
+    console.log("\n=== GET /app/installations (Installations for this App) ===");
+    const { data: installations } = await octokit.request("GET /app/installations");
+    if (!installations || installations.length === 0) {
+      console.log("No installations found for this app.");
+    } else {
+      console.log("Found installations:");
+      installations.forEach(inst => {
+        console.log(`- id: ${inst.id}, account: ${inst.account?.login}, app_slug: ${inst.app_slug}`);
+      });
+    }
+
+    const installationId = INSTALLATION_ID || (installations && installations[0] && installations[0].id);
+    if (!installationId) {
+      console.log("\nNo installation id provided and none found automatically. Set INSTALLATION_ID in .env or choose one from the installations list above.");
+      return;
+    }
+
+    console.log(`\n=== Creating installation access token for installation ${installationId} ===`);
+
+    const { data: tokenData } = await octokit.request(
+      "POST /app/installations/{installation_id}/access_tokens",
+      { installation_id: installationId }
+    );
+    console.log("Installation token created. Expires at:", tokenData.expires_at);
+
+    const installationOctokit = new Octokit({ auth: tokenData.token });
+    const repos = await installationOctokit.request("GET /installation/repositories");
+    console.log("\nRepositories visible to this installation:");
+    repos.data.repositories.forEach(r => {
+      console.log(`- ${r.full_name}`);
+    });
+
+  } catch (err) {
+    console.error("Error:", err.message || err);
+    if (err.status) console.error("HTTP status:", err.status);
+    if (err.response && err.response.data) {
+      console.error("Response data:", JSON.stringify(err.response.data, null, 2));
+    }
+    process.exit(1);
+  }
+}
+
+run();
+EOF
+
+cat > .env.example <<'EOF'
+# Copy this file to .env and fill values.
+# APP_ID: the numeric App ID shown on your GitHub App settings page (e.g. 12345)
+# PRIVATE_KEY: the full PEM private key you download from GitHub when creating the App.
+#   If you paste it into an environment variable, make sure it contains the newlines.
+# INSTALLATION_ID: optional - if provided the script will create an installation token for this id.
+
+APP_ID=12345
+
+# Option A (recommended): put the PEM exactly as downloaded (multi-line).
+# Option B: single-line with literal \n sequences (the script converts them):
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nREPLACE_WITH_YOUR_KEY\n-----END RSA PRIVATE KEY-----"
+
+INSTALLATION_ID=
+EOF
+
+cat > README.md <<'EOF'
+# GitHub App example (Node.js + Octokit)
+
+This small example authenticates as a GitHub App (using the app's private key), calls `GET /app` to fetch app metadata, lists installations, and can create an installation access token to act as that installation.
+
+Quick start
+1. Copy `.env.example` to `.env` and fill APP_ID and PRIVATE_KEY (and optionally INSTALLATION_ID).
+2. npm install
+3. npm start
+
+Security tips
+- Keep the private key secret. Do NOT commit `.env` to source control.
+- Prefer storing the private key in a secrets manager or environment variables injected at runtime.
+EOF
+
+cat > SECURITY.md <<'EOF'
+# Security Policy
+
+Thank you for responsibly reporting security issues in MeGaOcToOoN.
+
+Reporting
+- Email: security@elmorab3.com (replace with your contact email)
+- Please include: steps to reproduce, impact, reproduction code or logs, and suggested mitigation.
+
+Response
+- We will acknowledge reports within 72 hours.
+- We aim to provide a remediation timeline depending on severity.
+
+Public disclosure
+- Please coordinate with us before public disclosure to allow us to address issues.
+
+Notes
+- Do NOT send private keys or credentials in any report.
+- For urgent incidents, contact: security@elmorab3.com
+EOF
+
+cat > INSTALL.md <<'EOF'
+# Installing MeGaOcToOoN (quick start)
+
+One-click install link:
+- https://github.com/apps/MeGaOcToOoN/installations/new
+  - Replace `MeGaOcToOoN` with your app slug if different.
+
+Recommended public install flow:
+1. User clicks the install link and chooses an account/repositories.
+2. GitHub redirects to your Setup URL configured in the GitHub App settings with `installation_id` in the query string.
+3. Your server (the setup endpoint) calls GitHub to exchange `installation_id` for an installation access token and completes onboarding (webhook registration, default settings, etc.).
+
+Local dev & testing:
+1. Copy `server/.env.example` to `server/.env` and set:
+   - APP_ID: your numeric GitHub App ID
+   - PRIVATE_KEY: your PEM private key (do NOT commit)
+   - SETUP_ORIGIN: your public domain (https://elmorab3.com)
+2. In `server/` run:
+   - npm install
+   - npm start
+3. For local testing of the installation callback, you can use ngrok to expose your local server and set the App Setup URL to the ngrok URL.
+
+Security notes:
+- Never commit PRIVATE_KEY to the repository.
+- Use GitHub Secrets (APP_ID, PRIVATE_KEY, INSTALLATION_ID) in Actions or a secure secrets manager in production.
+EOF
+
+cat > MARKETPLACE.md <<'EOF'
+# Marketplace Listing Draft — MeGaOcToOoN
+
+Name: MeGaOcToOoN
+
+Short description:
+A lightweight GitHub App that [briefly describe main functionality — metrics, automation, PR helpers, etc.].
+
+Long description:
+MeGaOcToOoN helps teams automate [task], integrate with [service], and enforce [policy]. It is built with minimal permissions and focuses on privacy and ease-of-install.
+
+Permissions requested:
+- Repositories: Read-only (list repos, metadata)
+- Issues: Read & Write (only if creating or updating issues)
+- Pull requests: Read-only (unless optional features require write)
+- Webhooks: push, pull_request, installation (to respond to installs and events)
+
+Installation/Onboarding:
+- One-click install via GitHub.
+- Post-install setup URL will automatically complete onboarding: create any required config, register webhooks, and show a success screen.
+
+Support & privacy:
+- Support: support@elmorab3.com
+- Privacy Policy: https://elmorab3.com/privacy
+- Terms: https://elmorab3.com/terms
+
+Assets:
+- Logo: 128x128 PNG
+- Screenshots: 3 images (install, config, dashboard)
+- Category: Developer tools / Automation
+
+Notes for review:
+- App requests minimal permissions by default. Any escalated permissions are requested only at explicit consent steps.
+- Include a short explainer video and a troubleshooting guide in the listing.
+EOF
+
+mkdir -p .github/workflows
+
+cat > .github/workflows/ci.yml <<'EOF'
+name: CI / Build / Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+        run: npm test
+
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run deployment script (example)
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }} # optional
+        run: node server/index.js
+EOF
+
+cat > .github/workflows/release.yml <<'EOF'
+name: Create GitHub Release on tag
+
+on:
+  push:
+    tags:
+      - 'v*'    # any tag starting with v, e.g. v10.0
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+EOF
+
+cat > AGENT.md <<'EOF'
+name: MeGaOcToOoN Agent
+description: A lightweight companion service for the MeGaOcToOoN GitHub App that handles post-install onboarding, installation token exchange, webhook processing, and optional automation tasks. Designed to be run as a small Express server or serverless function and to be deployed with secrets stored in your host's secret manager.
+
+---
+
+# My Agent
+
+This document describes what the MeGaOcToOoN Agent does, how it should be configured, and what to include when committing it to the repository.
+
+## Purpose
+The MeGaOcToOoN Agent performs the server-side actions required after a user installs the MeGaOcToOoN GitHub App. Its primary responsibilities are:
+- Accept the GitHub App setup redirect and exchange the installation_id for a short-lived installation access token.
+- Run onboarding automation (create repo config files, register webhooks, seed data).
+- Provide a webhook endpoint to receive and process GitHub events (installation, push, pull_request, etc.).
+- Provide a healthcheck and basic status page for monitoring.
+
+## Responsibilities / capabilities
+- GET /setup
+  - Receives `installation_id` from GitHub after the user installs the app.
+  - Uses the App JWT (created with APP_ID + PRIVATE_KEY) to request an installation token from GitHub.
+  - Performs onboarding tasks using the installation token and shows a success page.
+- POST /webhook
+  - Receives events from GitHub.
+  - Validates signature using a webhook secret.
+  - Routes events to handlers for processing (e.g., create issue, label PR).
+- Optional admin endpoints (protected by auth) to list active installations and revoke tokens.
+
+## Run & configure
+Environment variables (never commit real values):
+- APP_ID — numeric GitHub App ID
+- PRIVATE_KEY — PEM for the GitHub App (store in secrets, not repo)
+- WEBHOOK_SECRET — secret to validate webhook payloads
+- SETUP_ORIGIN — public origin for redirects (e.g. https://elmorab3.com)
+- ADMIN_EMAIL — optional admin contact
+
+Example local start:
+1. Copy `server/.env.example` → `server/.env` and fill values (do NOT commit).
+2. npm install
+3. npm start
+
+CI / deployment:
+- Store secrets in GitHub Actions secrets or your host provider (Render, Fly, Vercel).
+- Use the `.github/workflows/ci.yml` and `release.yml` to run tests and publish releases.
+- Ensure PRIVATE_KEY is only available to runtime and CI via secrets.
+
+## Commit & PR guidance (what to add to the repo)
+When adding or updating the agent code, use a clear commit message and request a reviewer. Example:
+- Commit message: chore(agent): add setup server and agent metadata
+- PR title: feat(agent): add setup server and onboarding flow
+- Request reviewer: @ELMOURABEA
+
+If you want to indicate collaborative authorship for automation, you may add a co-author trailer in commits:
+- Co-authored-by: GitHub Copilot <copilot@github.com>
+
+## Security considerations
+- NEVER commit PRIVATE_KEY or other secrets to the repo.
+- Validate webhooks using X-Hub-Signature-256 and the webhook secret.
+- Restrict app permissions to the minimum required (principle of least privilege).
+- Rotate private key periodically and publish a revocation/rotation plan.
+- Enable branch protection and require PR reviews for main.
+
+## Release & distribution
+- Tag releases with semantic tags (we're preparing v10.0).
+- Publish release notes (RELEASE_NOTES.md) and attach build artifacts if applicable.
+- For Marketplace: provide clear permission rationale, privacy policy URL, support contact, screenshots, and an install flow.
+
+## Review checklist for PRs touching the agent
+- [ ] No private keys or secrets are included
+- [ ] .env.example present and complete
+- [ ] README / INSTALL.md updated with setup URL and domain
+- [ ] Tests added or smoke checks for endpoints
+- [ ] CI workflow references secrets via \${{ secrets.* }} and does not print them
+- [ ] Webhook signature validation implemented
+- [ ] Code scanning (CodeQL) passes or is configured
+
+---
+
+Thanks — special thanks to @ELMOURABEA for the opportunity to help finish this project.
+
+Co-authored-by: GitHub Copilot <copilot@github.com>
+EOF
+
+cat > RELEASE_NOTES.md <<'EOF'
+# Release v10.0 — Release notes template
+
+Summary
+- Short summary of the release and the high-level features/fixes.
+
+New
+- List major new features introduced in v10.0.
+
+Fixed
+- List important bug fixes.
+
+Breaking changes
+- Document any breaking changes, migration notes, or configuration changes.
+
+Upgrade notes
+- Steps for users to upgrade and any post-upgrade actions (e.g., reconfigure webhook, rotate keys).
+
+Security
+- Note any security fixes and guidance (rotate secrets if needed).
+
+Assets
+- Attach links to docs, changelog, screenshots, and any relevant migration scripts.
+
+Support
+- Contact: support@elmorab3.com
+EOF
+
+# server/ files
+mkdir -p server
+
+cat > server/package.json <<'EOF'
+{
+  "name": "megaoctooon-setup-server",
+  "version": "1.0.0",
+  "description": "Setup server for MeGaOcToOoN GitHub App - handles installation callbacks and creates installation tokens",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "octokit": "^2.0.0",
+    "@octokit/auth-app": "^4.0.0"
+  }
+}
+EOF
+
+cat > server/.env.example <<'EOF'
+# Copy to server/.env and fill in values (DO NOT commit .env)
+
+APP_ID=12345
+# PRIVATE_KEY: either paste multi-line PEM or single-line with \n sequences (script supports both)
+PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nREPLACE_WITH_KEY\n-----END RSA PRIVATE KEY-----"
+
+# Public origin where your app runs, used for redirects (e.g. https://elmorab3.com)
+SETUP_ORIGIN=https://elmorab3.com
+
+# Optional: a dashboard admin email
+ADMIN_EMAIL=admin@elmorab3.com
+EOF
+
+cat > server/index.js <<'EOF'
+import express from "express";
+import 'dotenv/config';
+import { Octokit } from "octokit";
+import { createAppAuth } from "@octokit/auth-app";
+
+const app = express();
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+function normalizePrivateKey(raw) {
+  if (!raw) return raw;
+  if (raw.includes("\\n")) return raw.replace(/\\n/g, "\n");
+  return raw;
+}
+
+const APP_ID = process.env.APP_ID;
+const PRIVATE_KEY = normalizePrivateKey(process.env.PRIVATE_KEY);
+
+if (!APP_ID || !PRIVATE_KEY) {
+  console.warn("Warning: APP_ID and PRIVATE_KEY should be set in environment for production use.");
+}
+
+// Simple healthcheck
+app.get("/", (req, res) => res.send("MeGaOcToOoN setup server is running."));
+
+// Setup endpoint — configured as "Setup URL" in GitHub App settings.
+// GitHub will redirect here after installation with ?installation_id=XXX
+app.get("/setup", async (req, res) => {
+  const installationId = req.query.installation_id;
+  if (!installationId) {
+    return res.status(400).send("installation_id is required in the query string.");
+  }
+
+  try {
+    // Octokit authenticated as the App (JWT) to create installation tokens
+    const appOctokit = new Octokit({
+      authStrategy: createAppAuth,
+      auth: {
+        appId: APP_ID,
+        privateKey: PRIVATE_KEY,
+      },
+    });
+
+    // Create an installation token for the installation_id
+    const { data: tokenData } = await appOctokit.request(
+      "POST /app/installations/{installation_id}/access_tokens",
+      { installation_id: installationId }
+    );
+
+    // tokenData.token is the short-lived installation token — keep secret
+    // Use it to perform any onboarding steps (create config file in repository, register webhooks, etc.)
+    // Example: list repositories accessible by installation:
+    const installationOctokit = new Octokit({ auth: tokenData.token });
+    const repos = await installationOctokit.request("GET /installation/repositories");
+
+    // Do any onboarding automation here (only as needed)
+    // For demo, we return a success page listing accessible repos.
+    res.send(`
+      <h1>MeGaOcToOoN installed successfully</h1>
+      <p>Installation id: ${installationId}</p>
+      <p>Token expires at: ${tokenData.expires_at}</p>
+      <h2>Accessible repositories:</h2>
+      <ul>
+        ${repos.data.repositories.map(r => `<li>${r.full_name}</li>`).join('')}
+      </ul>
+      <p>Close this page and go back to the app.</p>
+    `);
+
+  } catch (err) {
+    console.error("Error during setup:", err);
+    res.status(500).send("Setup failed. Check server logs.");
+  }
+});
+
+// POST webhook endpoint (optional)
+app.post("/webhook", (req, res) => {
+  // Validate X-Hub-Signature-256 using webhook secret in production
+  // Process events as needed (installation, push, pull_request, etc.)
+  res.status(200).send("ok");
+});
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Setup server listening on port ${port}`);
+});
+EOF
+
+echo "All files created."
+echo
+cat <<'INSTR'
+Next steps (copy/paste):
+
+1) Initialize git (if not already) and ensure you're on main:
+   git init            # only if this is a new folder
+   git checkout -b main || true
+   git add .
+   git commit -m "chore: add app infra, agent, docs, CI and setup server"
+
+2) Push to the remote (ensure origin is set):
+   # If origin not set: git remote add origin git@github.com:ELMOURABEA/MeGaOcto.git
+   git push -u origin main
+
+3) Create and push release tag v10.0:
+   git tag -a v10.0 -m "Release v10.0"
+   git push origin v10.0
+
+4) Add repository secrets in GitHub Settings → Secrets → Actions:
+   - APP_ID
+   - PRIVATE_KEY (PEM; multiline or use \n sequences)
+   - WEBHOOK_SECRET
+   - INSTALLATION_ID (optional)
+
+5) Deploy server to your host (Render / Fly / Vercel) and set custom domains:
+   - Add elmorab3.com and www.elmorab3.com, enable TLS.
+   - In GitHub App settings set Setup URL: https://elmorab3.com/setup and Webhook URL: https://elmorab3.com/webhook
+
+When you've pushed the code and pushed the v10.0 tag, reply:
+   "I pushed — please review"
+
+I will then perform the review and provide next steps and final checks.
+INSTR
+
+echo
+echo "Script complete."
