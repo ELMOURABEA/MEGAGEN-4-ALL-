@@ -10,6 +10,7 @@
  */
 
 import 'dotenv/config';
+import { exec } from 'child_process';
 
 /**
  * Configuration for the GitHub App
@@ -110,45 +111,37 @@ function displayInstructions() {
 /**
  * Check if running in a browser-capable environment and open URL
  */
-async function openInstallUrl() {
+function openInstallUrl() {
   const installUrl = APP_CONFIG.installUrl;
   
   console.log('\n🌐 Opening installation page in your browser...\n');
   
-  // Dynamic import for cross-platform URL opening
-  try {
-    const { exec } = await import('child_process');
-    const platform = process.platform;
-    
-    let command;
-    if (platform === 'darwin') {
-      command = `open "${installUrl}"`;
-    } else if (platform === 'win32') {
-      command = `start "" "${installUrl}"`;
-    } else {
-      command = `xdg-open "${installUrl}"`;
-    }
-    
-    exec(command, (error) => {
-      if (error) {
-        console.log('⚠️  Could not open browser automatically.');
-        console.log('   Please open this URL manually:\n');
-        console.log(`   ${installUrl}\n`);
-      } else {
-        console.log('✅ Browser opened! Complete the installation in your browser.\n');
-      }
-    });
-  } catch {
-    console.log('⚠️  Could not open browser automatically.');
-    console.log('   Please open this URL manually:\n');
-    console.log(`   ${installUrl}\n`);
+  const platform = process.platform;
+  
+  let command;
+  if (platform === 'darwin') {
+    command = `open "${installUrl}"`;
+  } else if (platform === 'win32') {
+    command = `start "" "${installUrl}"`;
+  } else {
+    command = `xdg-open "${installUrl}"`;
   }
+  
+  exec(command, (error) => {
+    if (error) {
+      console.log('⚠️  Could not open browser automatically.');
+      console.log('   Please open this URL manually:\n');
+      console.log(`   ${installUrl}\n`);
+    } else {
+      console.log('✅ Browser opened! Complete the installation in your browser.\n');
+    }
+  });
 }
 
 /**
  * Main function
  */
-async function main() {
+function main() {
   const args = process.argv.slice(2);
   
   if (args.includes('--help') || args.includes('-h')) {
@@ -157,7 +150,7 @@ async function main() {
   }
   
   if (args.includes('--open') || args.includes('-o')) {
-    await openInstallUrl();
+    openInstallUrl();
     return;
   }
   
@@ -170,4 +163,4 @@ async function main() {
 }
 
 // Execute
-main().catch(console.error);
+main();
