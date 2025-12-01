@@ -41,8 +41,8 @@ async function run() {
   // Validate required environment variables
   if (!APP_ID || !PRIVATE_KEY) {
     console.error("❌ ERROR: APP_ID and PRIVATE_KEY must be set in your .env file");
-    console.error("   See .env.example for setup instructions.");
-    console.error("\n   Steps to configure:");
+    console.error("   See .env.example in this directory for setup instructions.");
+    console.error("\n   Steps to configure (run from github-app-sample directory):");
     console.error("   1. Copy .env.example to .env");
     console.error("   2. Get your APP_ID from https://github.com/settings/apps/megaoctooon");
     console.error("   3. Download your private key from the GitHub App settings");
