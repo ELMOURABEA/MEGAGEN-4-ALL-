@@ -182,9 +182,23 @@ async function run() {
     if (err.status) {
       console.error("   HTTP Status:", err.status);
     }
-    // If API returned a body with details, print it (careful with tokens)
+    // If API returned a body with details, print only safe fields by default
     if (err.response && err.response.data) {
-      console.error("   Response:", JSON.stringify(err.response.data, null, 2));
+      // Only log selected non-sensitive fields
+      const safeFields = {};
+      if (typeof err.response.data === 'object' && err.response.data !== null) {
+        if ('message' in err.response.data) safeFields.message = err.response.data.message;
+        if ('documentation_url' in err.response.data) safeFields.documentation_url = err.response.data.documentation_url;
+        if ('errors' in err.response.data) safeFields.errors = err.response.data.errors;
+      }
+      if (Object.keys(safeFields).length > 0) {
+        console.error("   Response (sanitized):", JSON.stringify(safeFields, null, 2));
+      }
+      // Optionally log full response in debug mode, with a warning
+      if (process.env.DEBUG === 'true' || process.env.NODE_ENV === 'development') {
+        console.error("   [WARNING] Full error response (may contain sensitive data):");
+        console.error("   ", JSON.stringify(err.response.data, null, 2));
+      }
     }
     console.error("\n   Common issues:");
     console.error("   - Invalid APP_ID: Check your GitHub App settings");
