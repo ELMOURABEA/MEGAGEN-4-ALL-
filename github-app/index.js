@@ -14,17 +14,32 @@ import { Octokit } from "octokit";
 import { createAppAuth } from "@octokit/auth-app";
 
 /**
- * Normalizes private key format by converting escaped newlines to actual newlines
+ * Normalizes and validates private key format
  * @param {string} raw - The raw private key string
  * @returns {string} - The normalized private key
+ * @throws {Error} - If the key format is invalid
  */
 function normalizePrivateKey(raw) {
   if (!raw) return raw;
-  // If user pasted a single-line PEM with literal \n characters, convert them to real newlines
-  if (raw.includes('\\n')) {
-    return raw.replace(/\\n/g, '\n');
+  
+  // Convert escaped newlines to actual newlines
+  let key = raw;
+  if (key.includes('\\n')) {
+    key = key.replace(/\\n/g, '\n');
   }
-  return raw;
+  
+  // Validate PEM format
+  const pemHeaderRegex = /-----BEGIN (RSA |EC )?PRIVATE KEY-----/;
+  const pemFooterRegex = /-----END (RSA |EC )?PRIVATE KEY-----/;
+  
+  if (!pemHeaderRegex.test(key)) {
+    throw new Error('Invalid private key: Missing PEM header (-----BEGIN PRIVATE KEY-----)');
+  }
+  if (!pemFooterRegex.test(key)) {
+    throw new Error('Invalid private key: Missing PEM footer (-----END PRIVATE KEY-----)');
+  }
+  
+  return key;
 }
 
 /**
@@ -149,6 +164,10 @@ async function run() {
       }
     });
     
+    // Clear sensitive token from memory after use
+    const tokenExpiry = tokenData.expires_at;
+    tokenData.token = null;
+    
     if (repos.data.repositories.length === 0) {
       console.log("   No repositories accessible to this installation.");
     } else {
@@ -170,6 +189,7 @@ async function run() {
     console.log("\n📌 Quick Reference:");
     console.log(`   App Install URL: https://github.com/apps/${app.slug}`);
     console.log(`   Settings URL: https://github.com/settings/apps/${app.slug}`);
+    console.log(`   Token expires at: ${tokenExpiry}`);
     console.log("\n💡 Next Steps:");
     console.log("   1. Use the installation token to make API calls");
     console.log("   2. Set up webhooks to receive events");
