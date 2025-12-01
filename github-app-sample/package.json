@@ -1,0 +1,28 @@
+{
+  "name": "megaoctooon-github-app-sample",
+  "version": "1.0.0",
+  "description": "Minimal example: authenticate as the MeGaOcToOoN GitHub App, call GET /app, list installations and create installation tokens",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "github",
+    "github-app",
+    "octokit",
+    "megaoctooon",
+    "authentication"
+  ],
+  "author": "ELMOURABEA",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ELMOURABEA/MeGaOcto.git"
+  },
+  "dependencies": {
+    "@octokit/auth-app": "^6.0.0",
+    "dotenv": "^16.3.1",
+    "octokit": "^3.1.0"
+  }
+}
