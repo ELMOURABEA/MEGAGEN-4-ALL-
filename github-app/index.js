@@ -1,18 +1,13 @@
-/**
- * MeGaOcToOoN GitHub App Authentication Script
- * 
+
+ /* MeGaOcToOoN GitHub App Authentication Script
  * This script authenticates as the GitHub App, calls GET /app to retrieve
  * app metadata, lists installations, and creates installation access tokens.
- * 
  * @author ELMOURABEA
  * @license MIT
- * @see https://github.com/ELMOURABEA/MeGaOcto
- */
-
-import 'dotenv/config';
+ * @see https://github.com/ELMOURABEA/MeGaOctoOoN/
+    import 'dotenv/config';
 import { Octokit } from "octokit";
 import { createAppAuth } from "@octokit/auth-app";
-
 /**
  * Normalizes and validates private key format
  * @param {string} raw - The raw private key string
