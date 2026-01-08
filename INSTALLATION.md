@@ -4,19 +4,14 @@ Complete guide to installing and deploying MEGA-Bot in various environments.
 
 ## Quick Install
 
-### Option 1: Install from PyPI (when published)
-```bash
-pip install megaagent
-```
-
-### Option 2: Install from Source
+### Option 1: Install from Source
 ```bash
 git clone https://github.com/ELMOURABEA/MEGAGENT.git
 cd MEGAGENT
 pip install -e .
 ```
 
-### Option 3: Install with All Features
+### Option 2: Install with All Features
 ```bash
 # Install with API server support
 pip install megaagent[api]
@@ -30,14 +25,11 @@ pip install megaagent[all]
 
 ## System Requirements
 
-- **Python:** 3.8 or higher
 - **Operating System:** Linux, macOS, Windows
 - **Memory:** Minimum 512MB RAM (1GB recommended)
 - **Disk Space:** ~100MB for installation
 
 ## Detailed Installation
-
-### 1. Python Environment Setup
 
 #### Using venv (Recommended)
 ```bash
