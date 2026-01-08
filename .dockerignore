@@ -1,9 +1,4 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+# npm_run_buld
 build/
 develop-eggs/
 dist/
