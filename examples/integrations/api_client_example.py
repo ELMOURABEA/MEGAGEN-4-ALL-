@@ -178,6 +178,7 @@ def example_error_handling():
         try:
             result = client.query("Test query")
             print(f"✓ Query successful")
+            print(f"  Platforms responded: {result['synthesis'].get('platforms_responded', 0)}")
         except Exception as e:
             print(f"Query failed: {e}")
         
