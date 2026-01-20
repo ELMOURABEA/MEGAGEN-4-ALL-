@@ -1,0 +1,67 @@
+{
+  "name": "MEGAGENT OCTOGEN V2.0",
+  "url": "https://github.com/ELMOURABEA/MEGAGENT",
+  "hook_attributes": {
+    "url": "https://megagent.app/api/webhooks"
+  },
+  "redirect_url": "https://megagent.app/oauth/callback",
+  "callback_urls": [
+    "https://megagent.app/oauth/callback",
+    "megagent://oauth/callback",
+    "http://localhost:8080/oauth/callback"
+  ],
+  "setup_url": "https://megagent.app/setup",
+  "description": "The Ultimate 10-in-1 AI SuperAgent - Unified AI orchestration with GitHub native integration",
+  "public": true,
+  "default_events": [
+    "check_run",
+    "check_suite",
+    "commit_comment",
+    "create",
+    "delete",
+    "deployment",
+    "deployment_status",
+    "fork",
+    "gollum",
+    "issue_comment",
+    "issues",
+    "pull_request",
+    "pull_request_review",
+    "pull_request_review_comment",
+    "push",
+    "release",
+    "repository",
+    "status",
+    "watch",
+    "workflow_run",
+    "workflow_job"
+  ],
+  "default_permissions": {
+    "actions": "write",
+    "checks": "write",
+    "contents": "write",
+    "deployments": "write",
+    "issues": "write",
+    "metadata": "read",
+    "packages": "write",
+    "pull_requests": "write",
+    "repository_hooks": "write",
+    "repository_projects": "write",
+    "statuses": "write",
+    "workflows": "write"
+  },
+  "environments": {
+    "development": {
+      "url": "http://localhost:8080",
+      "callback_urls": ["http://localhost:8080/oauth/callback"]
+    },
+    "staging": {
+      "url": "https://staging.megagent.app",
+      "callback_urls": ["https://staging.megagent.app/oauth/callback"]
+    },
+    "production": {
+      "url": "https://megagent.app",
+      "callback_urls": ["https://megagent.app/oauth/callback"]
+    }
+  }
+}

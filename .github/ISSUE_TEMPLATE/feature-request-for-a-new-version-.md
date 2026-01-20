@@ -1,9 +1,9 @@
 ---
-name: Feature request
+name: 'Feature request for a new version '
 about: Suggest an idea for this project
-title: For updates & develope MeGa
+title: For updates & develope MeGaOcto
 labels: enhancement, question
-assignees: ELMOURABEA
+assignees: ELMOURABEA, Copilot
 
 ---
 

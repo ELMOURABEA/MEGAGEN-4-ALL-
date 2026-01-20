@@ -3,13 +3,14 @@ Main entry point for MEGA-Bot
 """
 import asyncio
 import sys
-from megabot import MegaBot, Config
+from megabot import MegaBot, Config, __version__
 
 
 async def demo():
     """Demo of MEGA-Bot capabilities"""
     print("=" * 80)
     print("XXXL MEGA BOT - Deep Research & Multi-Platform AI Integration")
+    print(f"Version {__version__}")
     print("=" * 80)
     print()
     
@@ -109,7 +110,8 @@ async def interactive_mode():
     bot = MegaBot(config)
     
     await bot.start()
-    print("\nMEGA-Bot interactive mode. Type 'help' for commands, 'exit' to quit.\n")
+    print(f"\nMEGA-Bot v{__version__} - Interactive Mode")
+    print("Type 'help' for commands, 'exit' to quit.\n")
     
     try:
         while True:
@@ -129,7 +131,12 @@ async def interactive_mode():
                     print("  capabilities       - List all capabilities")
                     print("  updates            - Show latest updates")
                     print("  sync               - Sync documents from platforms")
+                    print("  version            - Show version information")
                     print("  exit               - Exit interactive mode")
+                    print()
+                elif command.lower() == 'version':
+                    print(f"\nMEGA-Bot version {__version__}")
+                    print("For more information, visit: https://github.com/ELMOURABEA/MEGAGENT")
                     print()
                 elif command.lower() == 'status':
                     status = bot.get_status()
