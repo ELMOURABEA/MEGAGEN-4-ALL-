@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  megabot-api:
+    build: .
+    container_name: megabot-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
+      - ./.env:/app/.env:ro
+      - ./config.json:/app/config.json:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_PATH=/data/megabot.db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Example: MEGA-Bot with web frontend
+  megabot-web:
+    build: .
+    container_name: megabot-web
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data
+      - ./.env:/app/.env:ro
+      - ./config.json:/app/config.json:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DATABASE_PATH=/data/megabot.db
+      - WEB_PORT=8080
+    restart: unless-stopped
+    command: ["python", "-m", "megabot.server"]
+    depends_on:
+      - megabot-api
+
+volumes:
+  data:
+    driver: local
